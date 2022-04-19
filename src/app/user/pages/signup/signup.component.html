@@ -1,0 +1,40 @@
+<form action="" [formGroup]="registerForm" (submit)="signUp()">
+  <h1>Registro</h1>
+  <p>
+    <mat-form-field appearance="standard">
+      <mat-label>Usuario</mat-label>
+      <input matInput placeholder="Indica tu nombre de usuario" formControlName="username" required>
+      <mat-icon matSuffix>person</mat-icon>
+      <mat-error *ngIf="invalidField('username')">{{errorMessage('username')}}</mat-error>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="standard">
+      <mat-label>Email</mat-label>
+      <input matInput placeholder="Indica tu email" formControlName="email" required>
+      <mat-icon matSuffix>email</mat-icon>
+      <mat-error *ngIf="invalidField('email')">{{errorMessage('email')}}</mat-error>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="standard">
+      <mat-label>Contraseña</mat-label>
+      <input matInput placeholder="Indica tu contraseña" formControlName="password" required>
+      <mat-icon matSuffix>password</mat-icon>
+      <mat-error *ngIf="invalidField('password')">{{errorMessage('password')}}</mat-error>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="standard">
+      <mat-label>Confirmar la contraseña</mat-label>
+      <input matInput placeholder="Indica otra vez tu contraseña" formControlName="password2" required>
+      <mat-icon matSuffix>password</mat-icon>
+      <mat-error *ngIf="invalidField('password2')">{{errorMessage('password2')}}</mat-error>
+    </mat-form-field>
+  </p>
+  <button mat-raised-button color="primary" [disabled]="!registerForm.valid || registerForm.pending">Registrarse</button>
+
+  <pre>
+    {{registerForm.valid | json}}
+  </pre>
+</form>

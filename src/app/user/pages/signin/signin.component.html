@@ -1,0 +1,23 @@
+<form action="" [formGroup]="signinForm" (submit)="signIn()">
+  <h1>Inicio de sesión</h1>
+  <p>
+    <mat-form-field appearance="standard">
+      <mat-label>Usuario / Email</mat-label>
+      <input matInput placeholder="Indica tu nombre de usuario o el email" formControlName="identifier" required>
+      <mat-icon matSuffix>person</mat-icon>
+      <mat-error *ngIf="invalidField('identifier')">{{errorMessage('identifier')}}</mat-error>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="standard">
+      <mat-label>Contraseña</mat-label>
+      <input matInput placeholder="Indica tu contraseña" formControlName="password" required>
+      <mat-icon matSuffix>password</mat-icon>
+      <mat-error *ngIf="invalidField('password')">{{errorMessage('password')}}</mat-error>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-error *ngIf="signinForm.errors?.['accessFail']">Datos incorrectos o el usuario no existe</mat-error>
+  </p>
+  <button mat-raised-button color="primary">Entrar</button>
+</form>
