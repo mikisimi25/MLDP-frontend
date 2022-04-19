@@ -1,0 +1,19 @@
+<!-- <mat-card fxLayout="row" color="primary" class="header">
+  <div class="left"></div>
+  <div class="right">
+    <button mat-raised-button color="primary">Login</button>
+    <button mat-stroked-button color="accent">Registo</button>
+  </div>
+</mat-card> -->
+<mat-toolbar color="primary">
+  <span>MLDP</span>
+  {{auth | json }}
+  <span class="example-spacer"></span>
+  <div fxLayoutGap="1vw" class="auth">
+    <button *ngIf="!auth" routerLink="user/signin" mat-raised-button color="basic">Login</button>
+    <button *ngIf="!auth"  routerLink="user/signup" mat-raised-button color="accent">Registo</button>
+    <button *ngIf="auth"  [routerLink]='"user/"+user?.username' mat-mini-fab color="secondary">
+      <mat-icon>perm_identity</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
