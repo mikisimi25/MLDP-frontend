@@ -52,20 +52,19 @@ export class AuthService {
     localStorage.removeItem( 'token' )
   }
 
-  public signInStorage() {
-    this.crd.getUserByStorage()
-      .subscribe( user => {
-        this._user = user
-      })
-  }
-
   public authVerification(): Observable<boolean> {
-    if( localStorage.getItem('token') && this.user) {
+    if( localStorage.getItem('token') ) {
+      this.crd.getUserById( localStorage.getItem('token')! )
+        .subscribe( user => {
+          console.log('userAut');
+          this._user = user;
+          console.log(this._user);
+        })
+
       console.log('user',this.user);
-      console.log('token',localStorage.getItem('token'));
+
       return of(true)
     } else {
-      console.log('user',this.user);
       return of(false)
     }
   }

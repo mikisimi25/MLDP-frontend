@@ -10,10 +10,14 @@
   {{auth | json }}
   <span class="example-spacer"></span>
   <div fxLayoutGap="1vw" class="auth">
-    <button *ngIf="!auth" routerLink="user/signin" mat-raised-button color="basic">Login</button>
-    <button *ngIf="!auth"  routerLink="user/signup" mat-raised-button color="accent">Registo</button>
-    <button *ngIf="auth"  [routerLink]='"user/"+user?.username' mat-mini-fab color="secondary">
+    <button *ngIf="auth" routerLink="user/signin" mat-raised-button color="basic">Login</button>
+    <button *ngIf="auth" routerLink="user/signup" mat-raised-button color="accent">Registo</button>
+    <button *ngIf="auth" mat-mini-fab color="secondary" [matMenuTriggerFor]="menu">
       <mat-icon>perm_identity</mat-icon>
     </button>
   </div>
 </mat-toolbar>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item routerLink='user/bebop23' >Perfil</button>
+  <button mat-menu-item (click)="signout()">Cerrar Sesión</button>
+</mat-menu>
