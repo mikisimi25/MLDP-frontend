@@ -10,10 +10,10 @@ import { CrudUserService } from '../../services/crud-user.service';
 })
 export class UserDashboardComponent implements OnInit {
 
-  private _userData: User | undefined;
+  public _userData: User | undefined;
 
   public get userData() {
-    return { ...this._userData }
+    return this._userData
   }
 
 
@@ -29,6 +29,7 @@ export class UserDashboardComponent implements OnInit {
           this._userData = userData;
         })
     });
+
   }
 
 

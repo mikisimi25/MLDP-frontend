@@ -7,6 +7,14 @@ const routes: Routes = [
     loadChildren: () => import('./user/user.module').then( m => m.UserModule)
   },
   {
+    path: 'movie',
+    loadChildren: () => import('./movie/movie.module').then( m => m.MovieModule)
+  },
+  {
+    path: 'list',
+    loadChildren: () => import('./list/list.module').then( m => m.ListModule)
+  },
+  {
     path: '**',
     redirectTo: 'user'
   }

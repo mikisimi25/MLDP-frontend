@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PrimeNGConfig } from 'primeng/api';
 import { AuthService } from './user/services/auth.service';
 import { CrudUserService } from './user/services/crud-user.service';
 
@@ -12,13 +13,14 @@ export class AppComponent implements OnInit{
 
   constructor(
     private as: AuthService,
-    private crs: CrudUserService
+    private crs: CrudUserService,
+    private primengConfig: PrimeNGConfig
   ) {}
 
   ngOnInit() {
-    if( localStorage.getItem('token') ) {
-      this.as.signInStorage()
-    }
+    this.primengConfig.ripple = true;
+    console.log('first');
+    this.as.authVerification();
   }
 
 }
