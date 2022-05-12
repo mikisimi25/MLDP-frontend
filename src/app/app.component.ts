@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
-import { AuthService } from './user/services/auth.service';
+import { AuthService } from './auth/services/auth.service';
+import { User } from './user/interfaces/user.interface';
 import { CrudUserService } from './user/services/crud-user.service';
 
 @Component({
@@ -9,7 +10,13 @@ import { CrudUserService } from './user/services/crud-user.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
-  title = 'frontend';
+  title = 'MLDP';
+  private _user!: User | undefined;
+
+  public get user() {
+    return this._user
+  }
+
 
   constructor(
     private as: AuthService,
@@ -19,8 +26,10 @@ export class AppComponent implements OnInit{
 
   ngOnInit() {
     this.primengConfig.ripple = true;
-    console.log('first');
-    this.as.authVerification();
+    this.as.authVerification()
+      .subscribe( user => {
+        this._user = user;
+      })
   }
 
 }

@@ -32,8 +32,8 @@ export class CrudUserService {
       })
   }
 
-  public getUserByUsername( username: string ): Observable<User | undefined> {
-    return this.http.get<User>(`${this._apiUrl}/user?username=${username}`)
+  public getUserByUsername( username: string ): Observable<User[] | undefined> {
+    return this.http.get<User[]>(`${this._apiUrl}/user?username=${username}`)
   }
 
   public getUserById( userId: string ): Observable<User | undefined> {

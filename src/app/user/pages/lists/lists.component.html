@@ -1,0 +1,57 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="Nueva lista" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="lists" [rows]="10" [paginator]="true" [globalFilterFields]="['title','description']" responsiveLayout="scroll" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="title">Title <p-sortIcon field="title"></p-sortIcon></th>
+                <th pSortableColumn="description">Descripción <p-sortIcon field="description"></p-sortIcon></th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-list>
+            <tr>
+                <td>{{list.title}}</td>
+                <td>{{list.description}}</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2" [routerLink]="'/user/'+username+'/list/'+list.id"></button>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editProduct(list)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(list)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+                En total tienes {{lists ? lists.length : 0 }} listas.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="listDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" pInputText id="title" [(ngModel)]="list.title" required autofocus />
+            <small class="p-error" *ngIf="submitted && !list.title">Title is required.</small>
+        </div>
+        <div class="field">
+            <label for="description">Description</label>
+            <textarea id="description" pInputTextarea [(ngModel)]="list.description" required rows="3" cols="20"></textarea>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

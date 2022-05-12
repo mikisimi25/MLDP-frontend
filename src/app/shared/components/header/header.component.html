@@ -5,7 +5,7 @@
     <button mat-stroked-button color="accent">Registo</button>
   </div>
 </mat-card> -->
-<mat-toolbar color="primary">
+<!-- <mat-toolbar color="primary">
   <span>MLDP</span>
   {{auth | json }}
   <span class="example-spacer"></span>
@@ -20,4 +20,13 @@
 <mat-menu #menu="matMenu">
   <button mat-menu-item routerLink='user/bebop23' >Perfil</button>
   <button mat-menu-item (click)="signout()">Cerrar Sesión</button>
-</mat-menu>
+</mat-menu> -->
+<p-menubar [model]="items">
+  <ng-template  pTemplate="start">
+    <span>MLDP</span>
+  </ng-template>
+  <ng-template pTemplate="end">
+    <button pButton routerLink="auth/signin">Login</button>
+    <button pButton routerLink="auth/signup">Registo</button>
+  </ng-template>
+</p-menubar>

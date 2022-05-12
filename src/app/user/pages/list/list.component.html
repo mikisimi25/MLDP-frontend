@@ -1,0 +1,15 @@
+<p-toast></p-toast>
+
+<div class="" style="width: 100%; overflow: hidden;padding: 1em;">
+  <div class="grid">
+    <p-card *ngFor="let film of movies; let i = index" class="col-4 movi" title="asd">
+
+      <img style="width: 100%" alt="Card" [src]="'https://image.tmdb.org/t/p/w500' + film.poster_path" >
+
+      <ng-template pTemplate="title">
+          {{ film.original_title }}
+      </ng-template>
+
+    </p-card>
+  </div>
+</div>

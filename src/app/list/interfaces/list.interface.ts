@@ -3,5 +3,6 @@ export interface List {
   userId: number,
   title: string,
   description?: string,
-  moviesId?: number[]
+  moviesId?: number[],
+  username?: string
 }

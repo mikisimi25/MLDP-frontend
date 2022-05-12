@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, tap } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import { ValidationsService } from 'src/app/shared/validator/validations.service';
-import { User } from '../interfaces/user.interface';
-import { CrudUserService } from './crud-user.service';
+import { User } from '../../user/interfaces/user.interface';
+import { CrudUserService } from '../../user/services/crud-user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +11,10 @@ import { CrudUserService } from './crud-user.service';
 export class AuthService {
 
   private _apiUrl: string = 'http://localhost:3000';
-  private _user!: User | undefined;
+  private _user: User | undefined;
 
   public get user() {
+    console.log('auth',this._user);
     return this._user
   }
 
@@ -52,20 +53,27 @@ export class AuthService {
     localStorage.removeItem( 'token' )
   }
 
-  public authVerification(): Observable<boolean> {
+  public authVerification(): Observable<User | undefined> {
     if( localStorage.getItem('token') ) {
-      this.crd.getUserById( localStorage.getItem('token')! )
-        .subscribe( user => {
-          console.log('userAut');
-          this._user = user;
-          console.log(this._user);
-        })
+      return this.crd.getUserById( localStorage.getItem('token')! )
+        .pipe(
+          map( user => {
+            this._user = user;
+            // console.log('authVerification2',this._user);
 
-      console.log('user',this.user);
+            return user;
+          })
+        )
+        // .subscribe( user => {
+        //   this._user = user;
+        //   console.log('authVerification',this._user);
 
-      return of(true)
+        //   return of(user);
+        // })
+
+        return of(this.user)
     } else {
-      return of(false)
+      return of(undefined)
     }
   }
 }
