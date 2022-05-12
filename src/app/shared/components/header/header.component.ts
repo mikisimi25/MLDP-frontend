@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthService } from 'src/app/user/services/auth.service';
+import { AuthService } from 'src/app/auth/services/auth.service';
+import { User } from 'src/app/user/interfaces/user.interface';
 import { CrudUserService } from 'src/app/user/services/crud-user.service';
 
 @Component({
@@ -8,11 +9,11 @@ import { CrudUserService } from 'src/app/user/services/crud-user.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
+  _user: User | undefined;
+  items: any = []
 
-  public _auth: boolean = true;
-
-  get auth() {
-    return this._auth;
+  get user() {
+    return this._user
   }
 
   constructor(
@@ -20,8 +21,73 @@ export class HeaderComponent {
     private crs: CrudUserService
   ) { }
 
+  ngOnInit() {
+    this.as.authVerification()
+      .subscribe( user => {
+        this._user = user;
+
+        this.items = [
+          {
+              label:'Películas',
+              icon:'pi pi-fw pi-movie',
+              items: [
+                {
+                  label: 'Populares',
+                  routerLink: `/movie/all`
+                },
+                {
+                  label: 'Buscar',
+                  routerLink: `/movie/search`
+                },
+              ]
+          },
+          {
+              label:'Series',
+              icon:'pi pi-fw pi-movie',
+              items: [
+                {
+                  label: 'Populares',
+                  routerLink: `/tvshow/all`
+                },
+                {
+                  label: 'Buscar',
+                  routerLink: `/tvshow/search`
+                },
+              ]
+          },
+          {
+              label:'Listas',
+              icon:'pi pi-fw pi-list',
+              items: [
+                {
+                  label: 'Populares',
+                  routerLink: `/list/all`
+                },
+                {
+                  label: 'Mis listas',
+                  routerLink: `/user/${this.user!.username}/lists`
+                },
+              ]
+          },
+          {
+              label:'Usuario',
+              icon:'pi pi-fw pi-user',
+              items: [
+                  {
+                    label: 'Perfil',
+                    routerLink: `/user/${this.user!.username}`
+                  },
+                  {
+                    label: 'Salir',
+                    command: () => this.signout()
+                  }
+              ]
+          }
+        ];
+      })
+  }
+
   public signout() {
     this.as.logout()
   }
-
 }

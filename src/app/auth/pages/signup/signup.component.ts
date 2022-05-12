@@ -3,10 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { UsernameValidatorService } from 'src/app/shared/validator/username-validator.service';
 import { ValidationsService } from 'src/app/shared/validator/validations.service';
+import { User } from 'src/app/user/interfaces/user.interface';
+import { CrudUserService } from 'src/app/user/services/crud-user.service';
 import { EmailValidatorService } from '../../../shared/validator/email-validator.service';
-import { User } from '../../interfaces/user.interface';
-import { CrudUserService } from '../../services/crud-user.service';
-
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ValidationsService } from 'src/app/shared/validator/validations.service';
+import { CrudUserService } from 'src/app/user/services/crud-user.service';
 import { AuthService } from '../../services/auth.service';
-import { CrudUserService } from '../../services/crud-user.service';
 
 @Component({
   selector: 'app-signin',

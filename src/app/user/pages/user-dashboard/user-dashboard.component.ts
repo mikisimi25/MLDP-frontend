@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { List } from 'src/app/list/interfaces/list.interface';
+import { ListService } from 'src/app/list/services/list.service';
 import { User } from '../../interfaces/user.interface';
 import { CrudUserService } from '../../services/crud-user.service';
 
@@ -10,25 +12,34 @@ import { CrudUserService } from '../../services/crud-user.service';
 })
 export class UserDashboardComponent implements OnInit {
 
-  public _userData: User | undefined;
+  private _user?: User;
+  public userLists!: List[];
 
-  public get userData() {
-    return this._userData
+  public get user() {
+    return this._user
   }
 
 
   constructor(
     private ar: ActivatedRoute,
-    private us: CrudUserService
+    private us: CrudUserService,
+    private ls: ListService
   ) { }
 
   ngOnInit(): void {
     this.ar.params.subscribe(({ id }) => {
       this.us.getUserByUsername( id )
-        .subscribe( userData => {
-          this._userData = userData;
+        .subscribe( user => {
+          if( user ) {
+            this._user = user[0];
+
+            this.ls.getUserLists( this._user.id! ).subscribe( lists => this.userLists = lists)
+
+          }
         })
     });
+
+
 
   }
 

@@ -3,18 +3,26 @@
 </pre> -->
 
 
-<main class="grid">
+<main class="grid" style="padding: 1em">
   <p-card class="col-5 avatar">
     <ng-template pTemplate="header">
       <img alt="Card" src="https://cdn.dribbble.com/users/1355613/screenshots/15252730/media/28f348daf9654c440f5dcf398d8e097a.jpg?compress=1&resize=400x300&vertical=top">
     </ng-template>
   </p-card>
 
-  <p-card class="col">
+  <p-card class="col-7">
     <h1>User</h1>
+    <pre>
+      {{ user | json }}
+    </pre>
+  </p-card>
 
+  <p-card class="col-12">
+    <h1>Listas</h1>
+    <pre>
+      {{ userLists | json }}
+    </pre>
   </p-card>
 
 
 </main>
-j

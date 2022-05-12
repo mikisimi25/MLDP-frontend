@@ -1,7 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
-import { PopularMoviesInterface } from '../interfaces/popularMovies.interface';
+import { GenreSearchResulte } from '../interfaces/categorie.interface';
+import { PopularMoviesInterface, Result } from '../interfaces/popularMovies.interface';
+import { SearchResult } from '../interfaces/searchResult.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +17,7 @@ export class MovieService {
     private http: HttpClient
   ) { }
 
-
-
-  popularMovies(): Observable<PopularMoviesInterface> {
+  public popularMovies(): Observable<PopularMoviesInterface> {
     const params = new HttpParams()
       .set('api_key',this._token)
       .set('language','es')
@@ -26,12 +26,39 @@ export class MovieService {
     return this.http.get<PopularMoviesInterface>(`${this._baseUrl}/3/movie/popular`, { params })
   }
 
-  getImagesOfMovie( movieId: number ) {
+  public getImagesOfMovie( movieId: number ) {
     const params = new HttpParams()
       .set('api_key',this._token)
       .set('language','es')
 
     return this.http.get(`${this._baseUrl}/3/movie/${movieId}/images`, { params })
+  }
+
+  public getMovieById( movieId: number) {
+    const params = new HttpParams()
+      .set('api_key',this._token)
+      .set('language','es')
+
+      return this.http.get(`${this._baseUrl}/3/movie/${movieId}`, { params })
+  }
+
+  public getMovieSearchResult( query: string ): Observable<SearchResult> {
+    const params = new HttpParams()
+      .set('api_key',this._token)
+      .set('language','es')
+      .set('query',query)
+      .set('page',1)
+      .set('include_adult',false)
+
+      return this.http.get<SearchResult>(`${this._baseUrl}/3/search/movie`, { params })
+  }
+
+  public getMovieCategories(): Observable<GenreSearchResulte> {
+    const params = new HttpParams()
+      .set('api_key',this._token)
+      .set('language','es')
+
+      return this.http.get<GenreSearchResulte>(`${this._baseUrl}/3/genre/movie/list`, { params })
   }
 
 }
