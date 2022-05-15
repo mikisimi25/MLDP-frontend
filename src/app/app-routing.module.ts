@@ -15,6 +15,10 @@ const routes: Routes = [
     loadChildren: () => import('./movie/movie.module').then( m => m.MovieModule)
   },
   {
+    path: 'tvshow',
+    loadChildren: () => import('./tvshow/tvshow.module').then( m => m.TvShowModule)
+  },
+  {
     path: 'list',
     loadChildren: () => import('./list/list.module').then( m => m.ListModule)
   }

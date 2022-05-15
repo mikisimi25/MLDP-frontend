@@ -42,7 +42,7 @@ export class ListService {
 
   }
 
-  public getUserListsByUsername( username: string ): Observable<List[]>{
+  public getUserListsByUsername( username: string, limit?: any ): Observable<List[]>{
     let userLists: List[] = [];
 
     return this.getMovieLists()
@@ -87,8 +87,8 @@ export class ListService {
       })
   }
 
-  public addMovieToList( listId: number, movieId: number ): void {
-    let moviesId: number[] | undefined = [];
+  public addMovieToList( listId: number, movieId: string ): void {
+    let moviesId: string[] | undefined = [];
 
     this.getMovieListById( listId )
       .subscribe( list => {
@@ -108,4 +108,5 @@ export class ListService {
       })
 
   }
+
 }

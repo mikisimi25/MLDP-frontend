@@ -27,6 +27,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
 import { ChipModule } from 'primeng/chip';
+import {TabViewModule} from 'primeng/tabview';
 
 @NgModule({
   exports: [
@@ -57,7 +58,8 @@ import { ChipModule } from 'primeng/chip';
     InputNumberModule,
     ConfirmDialogModule,
     InputTextareaModule,
-    ChipModule
+    ChipModule,
+    TabViewModule
   ],
   providers: [ MessageService, ConfirmationService]
 })

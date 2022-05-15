@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PrimengModule } from '../primeng/primeng.module';
+import { PrimengModule } from './primeng/primeng.module';
 import { HeaderComponent } from './components/header/header.component';
-import { MaterialModule } from '../material/material.module';
+import { MaterialModule } from './material/material.module';
 
 
 

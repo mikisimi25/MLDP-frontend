@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { ListService } from '../../../list/services/list.service';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { MessageService } from 'primeng/api';
 import { ActivatedRoute } from '@angular/router';
+import { ListService } from 'src/app/list/services/list.service';
 import { ContentService } from 'src/app/shared/services/content.service';
 
 @Component({
-  selector: 'app-search-movie-result',
-  templateUrl: './search-movie-result.component.html',
-  styleUrls: ['./search-movie-result.component.scss'],
+  selector: 'app-search-tvshow-result',
+  templateUrl: './search-tvshow-result.component.html',
+  styleUrls: ['./search-tvshow-result.component.scss'],
   providers: [MessageService],
 })
-export class SearchMovieResultComponent implements OnInit {
+export class SearchTvshowResultComponent implements OnInit {
   showContent: any[] = [];
   listOfLists: List[] = [];
 
@@ -28,7 +28,7 @@ export class SearchMovieResultComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(({ query }) => {
-      this.cs.getMovieOrTvshowsSearchResult( 'movie', query).subscribe((movies) => {
+      this.cs.getMovieOrTvshowsSearchResult( 'tv', query).subscribe((movies) => {
         this.showContent = movies.results;
 
         this.ls.getMovieLists().subscribe((lists) => {
