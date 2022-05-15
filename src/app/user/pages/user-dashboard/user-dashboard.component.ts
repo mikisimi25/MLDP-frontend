@@ -8,42 +8,35 @@ import { CrudUserService } from '../../services/crud-user.service';
 @Component({
   selector: 'app-user-dashboard',
   templateUrl: './user-dashboard.component.html',
-  styleUrls: ['./user-dashboard.component.scss']
+  styleUrls: ['./user-dashboard.component.scss'],
 })
 export class UserDashboardComponent implements OnInit {
-
+  public lists: List[] = [];
+  public list!: List;
   private _user?: User;
   public userLists!: List[];
 
   public get user() {
-    return this._user
+    return this._user;
   }
-
 
   constructor(
     private ar: ActivatedRoute,
     private us: CrudUserService,
     private ls: ListService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.ar.params.subscribe(({ id }) => {
-      this.us.getUserByUsername( id )
-        .subscribe( user => {
-          if( user ) {
-            this._user = user[0];
+    //Load user data and lists of user
+    this.ar.params.subscribe(({ username }) => {
+      this.us.getUserByUsername( username ).subscribe((user) => {
+        if (user) {
+          this._user = user[0];
 
-            this.ls.getUserLists( this._user.id! ).subscribe( lists => this.userLists = lists)
-
-          }
-        })
+          this.ls.getUserListsByUsername( username, 5)
+            .subscribe((lists) => (this.userLists = lists));
+        }
+      });
     });
-
-
-
   }
-
-
-
-
 }

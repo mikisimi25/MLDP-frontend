@@ -10,7 +10,7 @@ const routes: Routes = [
     path: '',
     children: [
       {
-        path: ':id',
+        path: ':username',
         component: UserDashboardComponent,
         // canLoad: [ AuthGuard ],
         // canActivate: [ AuthGuard ],

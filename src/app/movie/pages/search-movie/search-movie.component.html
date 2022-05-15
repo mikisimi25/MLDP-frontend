@@ -1,18 +1,16 @@
-<main class="grid" style="padding: 1em;">
-  <p-card class="col-12 avatar align-center">
-
-    <div class="col-12 md:col-4">
+<div class="grid">
+  <main class="lg:col-10 lg:col-offset-1 col-12 grid" style="margin: 0 auto;">
+    <p-card class="col-12 avatar align-center">
       <div class="p-inputgroup">
-          <button type="button" pButton pRipple label="Buscar" (click)="search()"></button>
-          <input type="text" pInputText placeholder="Nombre de la película" [(ngModel)]="searchQuery" >
+        <input type="text" pInputText placeholder="Nombre de la película" [(ngModel)]="searchQuery">
+        <button type="button" pButton pRipple label="Buscar" (click)="search()"></button>
       </div>
-   </div>
+    </p-card>
 
-  </p-card>
+    <p-card class="col-12 avatar align-center">
+      <h1>Categorias</h1>
+      <p-chip *ngFor="let genre of genres" [label]='genre.name' styleClass="mr-2 mb-2"></p-chip>
+    </p-card>
 
-  <p-card class="col-12 avatar align-center">
-    <h1>Categorias</h1>
-    <p-chip *ngFor="let genre of genres" [label]='genre.name' styleClass="mr-2 mb-2"></p-chip>
-  </p-card>
-
-</main>
+  </main>
+</div>

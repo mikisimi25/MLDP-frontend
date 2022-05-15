@@ -5,7 +5,7 @@ import { MovieRoutingModule } from './movie-routing.module';
 import { ShowmoviesComponent } from './pages/showmovies/showmovies.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from '../shared/shared.module';
-import { PrimengModule } from '../primeng/primeng.module';
+import { PrimengModule } from '../shared/primeng/primeng.module';
 import { FormsModule } from '@angular/forms';
 import { MovieInfoComponent } from './pages/movie-info/movie-info.component';
 import { SearchMovieComponent } from './pages/search-movie/search-movie.component';

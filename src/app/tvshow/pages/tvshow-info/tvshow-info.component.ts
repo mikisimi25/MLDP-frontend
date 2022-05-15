@@ -3,11 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { ContentService } from 'src/app/shared/services/content.service';
 
 @Component({
-  selector: 'app-movie-info',
-  templateUrl: './movie-info.component.html',
-  styleUrls: ['./movie-info.component.scss']
+  selector: 'app-tvshow-info',
+  templateUrl: './tvshow-info.component.html',
+  styleUrls: ['./tvshow-info.component.scss']
 })
-export class MovieInfoComponent implements OnInit {
+export class TvshowInfoComponent implements OnInit {
   public movie: any;
 
   constructor(
@@ -16,8 +16,8 @@ export class MovieInfoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.activatedRoute.params.subscribe(({ movieId }) => {
-      this.cs.getMovieOrTvshowsById( 'movie/'+movieId ).subscribe( movie => this.movie = movie)
+    this.activatedRoute.params.subscribe(({ tvId }) => {
+      this.cs.getMovieOrTvshowsById( ('tv/'+tvId) ).subscribe( movie => this.movie = movie)
     });
   }
 

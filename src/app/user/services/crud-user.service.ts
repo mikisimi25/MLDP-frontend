@@ -1,8 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { ValidationsService } from 'src/app/shared/validator/validations.service';
 import { User } from '../interfaces/user.interface';
 
 @Injectable({
@@ -18,9 +16,7 @@ export class CrudUserService {
   }
 
   constructor(
-    private ar: ActivatedRoute,
-    private http: HttpClient,
-    private vs: ValidationsService
+    private http: HttpClient
   ) { }
 
   public addUser( userData: any ): void {

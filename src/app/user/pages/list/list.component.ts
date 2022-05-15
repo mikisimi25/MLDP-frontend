@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MovieService } from 'src/app/movie/services/movie.service';
+import { ContentService } from 'src/app/shared/services/content.service';
 import { ListService } from '../../../list/services/list.service';
 
 @Component({
@@ -14,7 +14,7 @@ export class ListComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private ls: ListService,
-    private ms: MovieService
+    private cs: ContentService
   ) { }
 
   ngOnInit(): void {
@@ -22,7 +22,7 @@ export class ListComponent implements OnInit {
       this.ls.getMovieListById( listId ).subscribe( list => {
           list.moviesId!.forEach( movieId => {
 
-            this.ms.getMovieById( movieId ).subscribe( movie => this.movies.push(movie))
+            this.cs.getMovieOrTvshowsById( movieId ).subscribe( movie => this.movies.push(movie))
 
           })
         })

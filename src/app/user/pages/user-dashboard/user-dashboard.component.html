@@ -1,28 +1,47 @@
-<!-- <pre>
-  {{ userData | json }}
-</pre> -->
+<div class="grid">
+  <main class="lg:col-8 lg:col-offset-2 col-12 col-offset-0 grid" style="padding: 1em">
+    <p-card class="md:col-5 col-12" styleClass="avatar">
+      <ng-template pTemplate="content">
+        <img alt="Card" src="https://cdn.dribbble.com/users/1355613/screenshots/15252730/media/28f348daf9654c440f5dcf398d8e097a.jpg?compress=1&resize=500x500&vertical=top">
+      </ng-template>
+    </p-card>
+
+    <p-card class="md:col-7 col-12" styleClass="userinfo">
+      <h1>{{user?.username | titlecase}}</h1>
+      <p>{{ user?.description }}</p>
+    </p-card>
+
+    <p-card class="col-12">
+      <h1>Listas</h1>
+
+      <p-toast></p-toast>
+
+      <div class="card">
+        <p-table #dt [value]="userLists" [globalFilterFields]="['title','description']" responsiveLayout="scroll"
+          [rowHover]="true" dataKey="id">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="title">Title <p-sortIcon field="title"></p-sortIcon>
+              </th>
+              <th pSortableColumn="description">Descripción <p-sortIcon field="description"></p-sortIcon>
+              </th>
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-list>
+            <tr>
+              <td>{{list.title}}</td>
+              <td>{{list.description}}</td>
+              <td>
+                <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2"
+                  [routerLink]="'/user/'+user?.username+'/list/'+list.id"></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </p-card>
 
 
-<main class="grid" style="padding: 1em">
-  <p-card class="col-5 avatar">
-    <ng-template pTemplate="header">
-      <img alt="Card" src="https://cdn.dribbble.com/users/1355613/screenshots/15252730/media/28f348daf9654c440f5dcf398d8e097a.jpg?compress=1&resize=400x300&vertical=top">
-    </ng-template>
-  </p-card>
-
-  <p-card class="col-7">
-    <h1>User</h1>
-    <pre>
-      {{ user | json }}
-    </pre>
-  </p-card>
-
-  <p-card class="col-12">
-    <h1>Listas</h1>
-    <pre>
-      {{ userLists | json }}
-    </pre>
-  </p-card>
-
-
-</main>
+  </main>
+</div>

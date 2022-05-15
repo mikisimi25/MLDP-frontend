@@ -4,11 +4,11 @@ import { ContentService } from 'src/app/shared/services/content.service';
 import { Genre } from '../../interfaces/categorie.interface';
 
 @Component({
-  selector: 'app-search-movie',
-  templateUrl: './search-movie.component.html',
-  styleUrls: ['./search-movie.component.scss']
+  selector: 'app-search-tvshow',
+  templateUrl: './search-tvshow.component.html',
+  styleUrls: ['./search-tvshow.component.scss']
 })
-export class SearchMovieComponent implements OnInit {
+export class SearchTvshowComponent implements OnInit {
 
   public searchQuery: string = '';
   public genres: Genre[] = [];
@@ -20,7 +20,7 @@ export class SearchMovieComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.cs.getMovieOrTvshowsCategories( 'movie' ).subscribe( categories => this.genres = categories.genres)
+    this.cs.getMovieOrTvshowsCategories( 'tv' ).subscribe( categories => this.genres = categories.genres)
 
   }
 

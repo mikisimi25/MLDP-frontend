@@ -1,3 +1,30 @@
-.avatar {
-  overflow: hidden;
+$mediaMaxMobile: 480px;
+$mediaMaxtablet: 768px;
+$mediaMaxlaptop: 1024px;
+$mediaMaxdesktop: 1200px;
+$mediaMinlarge: 1201px;
+
+
+:host ::ng-deep {
+  .avatar {
+    overflow: hidden;
+
+    .p-card-body {
+      height: 100%;
+
+      .p-card-content {
+        overflow: hidden;
+        height: 100%;
+        padding: 0;
+
+        img {
+          width: 100%;
+        }
+      }
+    }
+
+    @media (max-width: $mediaMaxMobile) {
+      height: 350px;
+    }
+  }
 }

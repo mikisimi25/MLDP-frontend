@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { SharedModule } from './shared/shared.module';
-import { PrimengModule } from './primeng/primeng.module';
+import { PrimengModule } from './shared/primeng/primeng.module';
 
 @NgModule({
   declarations: [

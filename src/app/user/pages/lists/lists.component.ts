@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { ListService } from 'src/app/list/services/list.service';
-import { CrudUserService } from '../../services/crud-user.service';
 import { ConfirmationService } from 'primeng/api';
 
 @Component({
@@ -21,19 +20,15 @@ export class ListsComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private ls: ListService,
-    private us: CrudUserService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) { }
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(({ username }) => {
-      this.us.getUserByUsername( username ).subscribe( user => {
         this.username = username;
-
         this.ls.getUserListsByUsername( username ).subscribe( lists => this.lists = lists )
-      })
-    });
+    })
   }
 
   openNew() {

@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Result } from '../../interfaces/popularMovies.interface';
 import { ListService } from '../../../list/services/list.service';
 import { List } from 'src/app/list/interfaces/list.interface';
 import {MessageService} from 'primeng/api';
 import { ContentService } from 'src/app/shared/services/content.service';
 
 @Component({
-  selector: 'app-showmovies',
-  templateUrl: './showmovies.component.html',
+  selector: 'app-showtvshow',
+  templateUrl: './showtvshows.component.html',
   styles: [
   ],
   providers: [MessageService]
 })
-export class ShowmoviesComponent implements OnInit {
+export class ShowTvshowsComponent implements OnInit {
 
-  showContent: Result[] = [];
+  showContent: any[] = [];
   listOfLists: List[] = [];
 
   groupedCities!: any[];
@@ -22,22 +21,25 @@ export class ShowmoviesComponent implements OnInit {
   selectedCountries: any[][] = [];
 
   constructor(
-    private cs: ContentService,
     private ls: ListService,
-    private messageService: MessageService
-  ) { }
+    private messageService: MessageService,
+    private cs: ContentService
+  ) {
+
+
+  }
 
   ngOnInit(): void {
 
-    this.cs.popularMoviesOrTv( 'movie' ).subscribe( movies => {
-        this.showContent = movies.results;
+    this.cs.popularMoviesOrTv( 'tv' ).subscribe( tv => {
+        this.showContent = tv.results;
 
         this.ls.getMovieLists().subscribe( lists => {
           this.listOfLists = lists;
 
           this.listOfLists.forEach( lista => {
             lista.moviesId?.forEach( movieId => {
-              movieId = movieId.slice(6)
+              movieId = movieId.slice(3)
 
               this.showContent.forEach( (movie,index) => {
 
@@ -72,7 +74,7 @@ export class ShowmoviesComponent implements OnInit {
     if( list.length > 0) {
       const selectedList: number = list.slice(-1)[0].id || 0;
 
-      this.ls.addMovieToList( selectedList, 'movie/'+movieId.toString());
+      this.ls.addMovieToList( selectedList, 'tv/'+movieId.toString());
 
       this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ list.slice(-1)[0].title});
     }
