@@ -26,7 +26,7 @@ export class SearchTvshowComponent implements OnInit {
 
   public search(): void {
     if( this.searchQuery.trim().length > 0) {
-      this.router.navigate([`movie/search/${ this.searchQuery }`]);
+      this.router.navigate([`tv/search/${ this.searchQuery }`]);
     }
   }
 

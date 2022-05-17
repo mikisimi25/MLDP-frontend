@@ -47,11 +47,11 @@ export class HeaderComponent {
               items: [
                 {
                   label: 'Populares',
-                  routerLink: `/tvshow/all`
+                  routerLink: `/tv/all`
                 },
                 {
                   label: 'Buscar',
-                  routerLink: `/tvshow/search`
+                  routerLink: `/tv/search`
                 },
               ]
           },

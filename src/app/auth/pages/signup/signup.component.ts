@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UsernameValidatorService } from 'src/app/shared/validator/username-validator.service';
 import { ValidationsService } from 'src/app/shared/validator/validations.service';
 import { User } from 'src/app/user/interfaces/user.interface';
 import { CrudUserService } from 'src/app/user/services/crud-user.service';
 import { EmailValidatorService } from '../../../shared/validator/email-validator.service';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -26,9 +28,11 @@ export class SignupComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private us: CrudUserService,
+    private as: AuthService,
     private usernameValidator: UsernameValidatorService,
     private emailValidator: EmailValidatorService,
-    private validations: ValidationsService
+    private validations: ValidationsService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -55,7 +59,16 @@ export class SignupComponent implements OnInit {
 
       this.us.addUser(userData)
 
-      this.registerForm.reset()
+      let user = userData.userData;
+
+      this.as.signIn( this.registerForm.get('username')?.value, this.registerForm.get('password')?.value ).subscribe({
+        next: resp => {
+          if( resp ) {
+            this.router.navigate([`./user/${resp.username}`])
+          }
+        }
+      })
+
     }
   }
 

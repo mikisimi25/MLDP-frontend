@@ -4,16 +4,18 @@ import { ListService } from '../../../list/services/list.service';
 import { List } from 'src/app/list/interfaces/list.interface';
 import {MessageService} from 'primeng/api';
 import { ContentService } from 'src/app/shared/services/content.service';
+import { AuthService } from 'src/app/auth/services/auth.service';
+import { User } from 'src/app/user/interfaces/user.interface';
 
 @Component({
   selector: 'app-showmovies',
   templateUrl: './showmovies.component.html',
-  styles: [
-  ],
+  styleUrls: ['./showmovies.component.scss'],
   providers: [MessageService]
 })
 export class ShowmoviesComponent implements OnInit {
 
+  user: User | undefined = undefined;
   showContent: Result[] = [];
   listOfLists: List[] = [];
 
@@ -24,46 +26,51 @@ export class ShowmoviesComponent implements OnInit {
   constructor(
     private cs: ContentService,
     private ls: ListService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private as: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.as.authVerification().subscribe( user => this.user = user)
 
     this.cs.popularMoviesOrTv( 'movie' ).subscribe( movies => {
         this.showContent = movies.results;
 
-        this.ls.getMovieLists().subscribe( lists => {
-          this.listOfLists = lists;
+        //Fill list of lists
+        if( this.user ) {
+          this.ls.getUserListsByUsername(this.user!.username).subscribe( lists => {
+            this.listOfLists = lists;
 
-          this.listOfLists.forEach( lista => {
-            lista.moviesId?.forEach( movieId => {
-              movieId = movieId.slice(6)
+            this.listOfLists.forEach( lista => {
+              lista.moviesId?.forEach( movieId => {
+                movieId = movieId.toString().slice(6)
 
-              this.showContent.forEach( (movie,index) => {
+                this.showContent.forEach( (movie,index) => {
 
-                if( parseInt(movieId) === movie.id ) {
-                  if( this.selectedCountries[index] === undefined) {
-                    this.selectedCountries[index] = []
+                  if( parseInt(movieId) === movie.id ) {
+                    if( this.selectedCountries[index] === undefined) {
+                      this.selectedCountries[index] = []
+                    }
+
+                    this.selectedCountries[index].push(lista)
                   }
 
-                  this.selectedCountries[index].push(lista)
-                }
+                })
 
               })
-
             })
+
+            this.groupedCities = [
+                {
+                  label: 'Germany',
+                  value: 'de',
+                  items: this.listOfLists
+                }
+            ];
+
+
           })
-
-          this.groupedCities = [
-              {
-                label: 'Germany',
-                value: 'de',
-                items: this.listOfLists
-              }
-          ];
-
-
-        })
+        }
       })
   }
 
