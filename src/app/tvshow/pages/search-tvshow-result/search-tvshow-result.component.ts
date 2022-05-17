@@ -4,6 +4,8 @@ import { MessageService } from 'primeng/api';
 import { ActivatedRoute } from '@angular/router';
 import { ListService } from 'src/app/list/services/list.service';
 import { ContentService } from 'src/app/shared/services/content.service';
+import { AuthService } from 'src/app/auth/services/auth.service';
+import { User } from 'src/app/user/interfaces/user.interface';
 
 @Component({
   selector: 'app-search-tvshow-result',
@@ -12,6 +14,8 @@ import { ContentService } from 'src/app/shared/services/content.service';
   providers: [MessageService],
 })
 export class SearchTvshowResultComponent implements OnInit {
+
+  user: User | undefined = undefined;
   showContent: any[] = [];
   listOfLists: List[] = [];
 
@@ -23,15 +27,20 @@ export class SearchTvshowResultComponent implements OnInit {
     private cs: ContentService,
     private ls: ListService,
     private messageService: MessageService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private as: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.as.authVerification().subscribe( user => this.user = user)
+
     this.activatedRoute.params.subscribe(({ query }) => {
       this.cs.getMovieOrTvshowsSearchResult( 'tv', query).subscribe((movies) => {
         this.showContent = movies.results;
 
-        this.ls.getMovieLists().subscribe((lists) => {
+        //Fill list of lists
+        if( this.user ) {
+          this.ls.getUserListsByUsername(this.user!.username).subscribe( lists => {
           this.listOfLists = lists;
 
           this.listOfLists.forEach((lista) => {
@@ -56,6 +65,7 @@ export class SearchTvshowResultComponent implements OnInit {
             },
           ];
         });
+      }
       });
     });
   }
