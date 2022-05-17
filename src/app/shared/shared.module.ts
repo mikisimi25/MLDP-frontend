@@ -3,15 +3,18 @@ import { CommonModule } from '@angular/common';
 import { PrimengModule } from './primeng/primeng.module';
 import { HeaderComponent } from './components/header/header.component';
 import { MaterialModule } from './material/material.module';
+import { FooterComponent } from './components/footer/footer.component';
 
 
 
 @NgModule({
   declarations: [
-    HeaderComponent
+    HeaderComponent,
+    FooterComponent
   ],
   exports: [
     HeaderComponent,
+    FooterComponent
   ],
   imports: [
     CommonModule,

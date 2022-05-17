@@ -24,7 +24,7 @@
           <p-tabPanel header="Datos">
             <ul>
               <li>Frase: {{ movie.tagline }}</li>
-              <li>Paises de rodaje: <p-chip *ngFor="let country of movie.production_countries" [label]='country.name' styleClass="mr-2"></p-chip>
+              <li>Países de rodaje: <p-chip *ngFor="let country of movie.production_countries" [label]='country.name' styleClass="mr-2"></p-chip>
               <li>Idioma original: {{ movie.original_language }}</li>
               <li>Presupuesto: {{ movie.budget | currency:'USD' }}</li>
               <li>Ganancias: {{ movie.revenue | currency:'USD' }}</li>

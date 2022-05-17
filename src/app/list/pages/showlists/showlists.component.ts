@@ -8,39 +8,17 @@ import { List } from '../../interfaces/list.interface';
   styleUrls: ['./showlists.component.scss']
 })
 export class ShowlistsComponent implements OnInit {
-
-  private _lists: List[] = [];
-
-  public get lists(): List[] {
-    return this._lists;
-  }
+  public lists: List[] = [];
+  public list!: List;
+  public listDialog: boolean = false;
+  public submitted: boolean = false;
+  public username!: string;
 
   constructor(
     private ls: ListService
   ) { }
 
   ngOnInit(): void {
-
-    this.ls.getMovieLists()
-      .subscribe( lists => {
-        this._lists = lists;
-      })
-
+    this.ls.getMovieLists().subscribe( lists => this.lists = lists)
   }
-
-  public createList() {
-
-    this.ls.createList(
-      {
-        userId: 1,
-        title: "Favoritos",
-        description: "Lista de películas favoritas de Bebop23",
-        moviesId: []
-      }
-    )
-
-  }
-
-
-
 }

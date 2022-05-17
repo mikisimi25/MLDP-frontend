@@ -28,6 +28,7 @@ import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
 import { ChipModule } from 'primeng/chip';
 import {TabViewModule} from 'primeng/tabview';
+import {PasswordModule} from 'primeng/password';
 
 @NgModule({
   exports: [
@@ -59,7 +60,8 @@ import {TabViewModule} from 'primeng/tabview';
     ConfirmDialogModule,
     InputTextareaModule,
     ChipModule,
-    TabViewModule
+    TabViewModule,
+    PasswordModule
   ],
   providers: [ MessageService, ConfirmationService]
 })

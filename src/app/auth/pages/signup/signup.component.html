@@ -1,40 +1,49 @@
-<form action="" [formGroup]="registerForm" (submit)="signUp()">
-  <h1>Registro</h1>
-  <p>
-    <mat-form-field appearance="standard">
-      <mat-label>Usuario</mat-label>
-      <input matInput placeholder="Indica tu nombre de usuario" formControlName="username" required>
-      <mat-icon matSuffix>person</mat-icon>
-      <mat-error *ngIf="invalidField('username')">{{errorMessage('username')}}</mat-error>
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-form-field appearance="standard">
-      <mat-label>Email</mat-label>
-      <input matInput placeholder="Indica tu email" formControlName="email" required>
-      <mat-icon matSuffix>email</mat-icon>
-      <mat-error *ngIf="invalidField('email')">{{errorMessage('email')}}</mat-error>
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-form-field appearance="standard">
-      <mat-label>Contraseña</mat-label>
-      <input matInput placeholder="Indica tu contraseña" formControlName="password" required>
-      <mat-icon matSuffix>password</mat-icon>
-      <mat-error *ngIf="invalidField('password')">{{errorMessage('password')}}</mat-error>
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-form-field appearance="standard">
-      <mat-label>Confirmar la contraseña</mat-label>
-      <input matInput placeholder="Indica otra vez tu contraseña" formControlName="password2" required>
-      <mat-icon matSuffix>password</mat-icon>
-      <mat-error *ngIf="invalidField('password2')">{{errorMessage('password2')}}</mat-error>
-    </mat-form-field>
-  </p>
-  <button mat-raised-button color="primary" [disabled]="!registerForm.valid || registerForm.pending">Registrarse</button>
+<main class="mt-3 mb-6" style="width: 350px;margin: 0 auto;text-align:center">
+  <p-card>
+    <h1>Inicio de sesión</h1>
+    <form [formGroup]="registerForm" class="p-fluid grid">
+      <div class="field col-12 mt-3">
+        <span class="p-float-label">
+          <input type="text" id="inputtext" pInputText formControlName="username" required>
+          <label for="inputtext">Usuario</label>
+        </span>
+        <small class="p-error block" style="height: 7px;">
+          <span *ngIf="invalidField('username')">{{errorMessage('username')}}</span>
+        </small>
+      </div>
 
-  <pre>
-    {{registerForm.valid | json}}
-  </pre>
-</form>
+      <div class="field col-12 mt-3">
+        <span class="p-float-label">
+          <input type="text" id="inputtext" pInputText formControlName="email" required>
+          <label for="inputtext">Email</label>
+        </span>
+        <small class="p-error block" style="height: 7px;">
+          <span *ngIf="invalidField('email')">{{errorMessage('email')}}</span>
+        </small>
+      </div>
+
+      <div class="field col-12">
+        <span class="p-float-label">
+          <input type="password" id="inputpassword" pPassword formControlName="password" [feedback]="false" required>
+          <label for="inputpassword">Contraseña</label>
+        </span>
+        <small class="p-error block" style="height: 7px;">
+          <span *ngIf="invalidField('password')">{{errorMessage('password')}}</span>
+        </small>
+      </div>
+
+      <div class="field col-12">
+        <span class="p-float-label">
+          <input type="password" id="inputpassword" pPassword formControlName="password2" [feedback]="false" required>
+          <label for="inputpassword">Indica otra vez tu contraseña</label>
+        </span>
+        <small class="p-error block" style="height: 7px;">
+          <span *ngIf="invalidField('password2')">{{errorMessage('password2')}}</span>
+        </small>
+      </div>
+
+      <button (click)="signUp()" pButton pRipple type="button" label="Registro" class="p-button-rounded" [disabled]="!registerForm.valid || registerForm.pending"></button>
+
+    </form>
+  </p-card>
+</main>

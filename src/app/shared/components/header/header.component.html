@@ -23,10 +23,10 @@
 </mat-menu> -->
 <p-menubar [model]="items">
   <ng-template  pTemplate="start">
-    <span>MLDP</span>
+    <span routerLink="movie/all">MLDP</span>
   </ng-template>
   <ng-template pTemplate="end">
-    <button pButton routerLink="auth/signin">Login</button>
-    <button pButton routerLink="auth/signup">Registo</button>
+    <button routerLink="auth/signin" pButton pRipple type="button" label="Login" class="p-button-primary mr-3"></button>
+    <button routerLink="auth/signup" pButton pRipple type="button" label="Registo" class="p-button-outlined p-button-primary"></button>
   </ng-template>
 </p-menubar>

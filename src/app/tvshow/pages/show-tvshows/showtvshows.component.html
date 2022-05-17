@@ -1,8 +1,8 @@
-<p-toast></p-toast>
+<div class="grid">
+  <main class="lg:col-10 lg:col-offset-1 col-12 grid" style="margin: 0 auto;">
+    <p-toast></p-toast>
 
-<div class="" style="width: 100%; overflow: hidden;padding: 1em;">
-  <div class="grid">
-    <p-card *ngFor="let film of showContent; let i = index" class="col-4 movi" title="asd">
+    <p-card *ngFor="let film of showContent; let i = index" class="lg:col-2 md:col-3 sm:col-4 col-12">
 
       <img style="width: 100%" alt="Card" [src]="'https://image.tmdb.org/t/p/w500' + film.poster_path" >
 
@@ -10,11 +10,17 @@
           {{ film.original_name }}
       </ng-template>
 
-      <ng-template pTemplate="footer">
-        <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2" [routerLink]="'/tvshow/'+film.id"></button>
-        <button (click)="addToFavourite('tvshow/'+film.id)" pButton pRipple type="button" icon="pi pi-heart" class="p-button-rounded p-button-help"></button>
-        <p-button label="boton" icon="pi pi-search" (click)="op.toggle($event)"></p-button>
-      </ng-template>
+      <div class="grid">
+        <div class="col">
+          <button pButton pRipple icon="pi pi-eye" class="p-button-rounded" [routerLink]="'/tv/'+film.id"></button>
+        </div>
+        <div class="col">
+          <button *ngIf="user" (click)="addToFavourite('tv/'+film.id)" pButton pRipple type="button" icon="pi pi-heart" class="p-button-rounded p-button-help col"></button>
+        </div>
+        <div class="col">
+          <button *ngIf="user" (click)="op.toggle($event)" pButton pRipple type="button" icon="pi pi-bookmark" class="p-button-rounded p-button-warning col"></button>
+        </div>
+      </div>
 
       <p-overlayPanel #op>
         <ng-template pTemplate>
@@ -33,5 +39,5 @@
       </p-overlayPanel>
 
     </p-card>
-  </div>
+  </main>
 </div>

@@ -1,3 +1,35 @@
-<pre>
-  {{ movie | json }}
-</pre>
+<div class="grid">
+  <main class="lg:col-10 lg:col-offset-1 col-12 grid" style="padding: 1em">
+    <p-card class="md:col-3 col-12 poster">
+      <ng-template pTemplate="content">
+        <img style="width: 100%" alt="Card" [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path">
+      </ng-template>
+    </p-card>
+
+    <p-card class="md:col-9 col-12 movieInfo">
+      <ng-template pTemplate="title">
+        {{movie.name + ' - ' + (movie.first_air_date | date:'YYYY')}}
+      </ng-template>
+      <ng-template pTemplate="subtitle">
+        {{movie.original_name}}
+      </ng-template>
+      <ng-template pTemplate="content">
+        <p-tabView>
+          <p-tabPanel header="Sinópsis">
+            <p>{{ movie.episode_run_time }} min.</p>
+            <p>{{ movie.overview }}</p>
+            <br>
+            <p><p-chip *ngFor="let genre of movie.genres" [label]='genre.name' styleClass="mr-2 mb-2"></p-chip></p>
+          </p-tabPanel>
+          <p-tabPanel header="Datos">
+            <ul>
+              <li>Frase: {{ movie.tagline }}</li>
+              <li>Países de rodaje: <p-chip *ngFor="let country of movie.production_countries" [label]='country.name' styleClass="mr-2"></p-chip>
+              <li>Idioma original: {{ movie.original_language }}</li>
+            </ul>
+          </p-tabPanel>
+        </p-tabView>
+      </ng-template>
+    </p-card>
+  </main>
+</div>

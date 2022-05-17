@@ -1,26 +1,29 @@
-<p-toast></p-toast>
+<div class="grid">
+  <main class="lg:col-10 lg:col-offset-1 col-12 grid" style="margin: 0 auto;">
+    <p-toast></p-toast>
 
-<div class="" style="width: 100%; overflow: hidden;padding: 1em;">
-  <div class="grid">
-    <p-card *ngFor="let film of showContent; let i = index" class="col-4 movi" title="asd">
+    <p-card *ngFor="let film of showContent; let i = index" class="lg:col-2 md:col-3 sm:col-4 col-12">
 
-      <img style="width: 100%" alt="Card" [src]="'https://image.tmdb.org/t/p/w500' + film.poster_path" >
+      <img style="width: 100%" alt="Card" [src]="'https://image.tmdb.org/t/p/w500' + film.poster_path">
 
       <ng-template pTemplate="title">
-          {{ film.original_title }}
+        {{ film.original_name }}
       </ng-template>
 
       <ng-template pTemplate="footer">
-        <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2" [routerLink]="'/movie/'+film.id"></button>
-        <button (click)="addToFavourite(film.id)" pButton pRipple type="button" icon="pi pi-heart" class="p-button-rounded p-button-help"></button>
+        <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2"
+          [routerLink]="'/tv/'+film.id"></button>
+        <button (click)="addToFavourite(film.id)" pButton pRipple type="button" icon="pi pi-heart"
+          class="p-button-rounded p-button-help"></button>
         <p-button label="boton" icon="pi pi-search" (click)="op.toggle($event)"></p-button>
       </ng-template>
 
       <p-overlayPanel #op>
         <ng-template pTemplate>
-            <p-listbox [options]="groupedCities" [group]="true" [(ngModel)]="selectedCountries[i]" [metaKeySelection]="false"
-              [checkbox]="true" [filter]="true" [multiple]="true" [listStyle]="{'max-height':'250px'}"
-              [style]="{'width':'15rem'}" optionLabel="title" (onClick)="showSuccess(film.id,selectedCountries[i])" >
+          <p-listbox [options]="groupedCities" [group]="true" [(ngModel)]="selectedCountries[i]"
+            [metaKeySelection]="false" [checkbox]="true" [filter]="true" [multiple]="true"
+            [listStyle]="{'max-height':'250px'}" [style]="{'width':'15rem'}" optionLabel="title"
+            (onClick)="showSuccess(film.id,selectedCountries[i])">
 
             <ng-template let-group pTemplate="group">
               <div class="flex align-items-center">
@@ -33,5 +36,5 @@
       </p-overlayPanel>
 
     </p-card>
-  </div>
+  </main>
 </div>

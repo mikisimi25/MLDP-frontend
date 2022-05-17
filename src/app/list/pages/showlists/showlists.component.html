@@ -1,5 +1,28 @@
-<pre *ngFor="let list of lists">
-  {{ list | json}}
-</pre>
-
-<button (click)="createList()" >Click</button>
+<div class="grid">
+  <main class="lg:col-8 lg:col-offset-2 col-12 col-offset-0 grid" style="padding: 1em">
+    <div class="card col-12">
+      <p-table #dt [value]="lists" [globalFilterFields]="['title','description']" responsiveLayout="scroll"
+        [rowHover]="true" dataKey="id">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="title">Title <p-sortIcon field="title"></p-sortIcon>
+            </th>
+            <th pSortableColumn="description">Descripción <p-sortIcon field="description"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-list>
+          <tr>
+            <td>{{list.title}}</td>
+            <td>{{list.description}}</td>
+            <td>
+              <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2"
+                [routerLink]="'/user/'+list.username+'/list/'+list.id"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </main>
+</div>
