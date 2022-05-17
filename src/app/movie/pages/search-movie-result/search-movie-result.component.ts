@@ -4,6 +4,8 @@ import { List } from 'src/app/list/interfaces/list.interface';
 import { MessageService } from 'primeng/api';
 import { ActivatedRoute } from '@angular/router';
 import { ContentService } from 'src/app/shared/services/content.service';
+import { User } from 'src/app/user/interfaces/user.interface';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
   selector: 'app-search-movie-result',
@@ -12,6 +14,7 @@ import { ContentService } from 'src/app/shared/services/content.service';
   providers: [MessageService],
 })
 export class SearchMovieResultComponent implements OnInit {
+  user: User | undefined = undefined;
   showContent: any[] = [];
   listOfLists: List[] = [];
 
@@ -23,40 +26,48 @@ export class SearchMovieResultComponent implements OnInit {
     private cs: ContentService,
     private ls: ListService,
     private messageService: MessageService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private as: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.as.authVerification().subscribe((user) => (this.user = user));
+
     this.activatedRoute.params.subscribe(({ query }) => {
-      this.cs.getMovieOrTvshowsSearchResult( 'movie', query).subscribe((movies) => {
-        this.showContent = movies.results;
+      this.cs.getMovieOrTvshowsSearchResult('movie', query).subscribe((movies) => {
+          this.showContent = movies.results;
 
-        this.ls.getMovieLists().subscribe((lists) => {
-          this.listOfLists = lists;
+          //Fill list of lists
+          if (this.user) {
+            this.ls
+              .getUserListsByUsername(this.user!.username)
+              .subscribe((lists) => {
+                this.listOfLists = lists;
 
-          this.listOfLists.forEach((lista) => {
-            lista.moviesId?.forEach((movieId) => {
-              this.showContent.forEach((movie, index) => {
-                if (movieId === movie.id) {
-                  if (this.selectedCountries[index] === undefined) {
-                    this.selectedCountries[index] = [];
-                  }
+                this.listOfLists.forEach((lista) => {
+                  lista.moviesId?.forEach((movieId) => {
+                    this.showContent.forEach((movie, index) => {
+                      if (movieId === movie.id) {
+                        if (this.selectedCountries[index] === undefined) {
+                          this.selectedCountries[index] = [];
+                        }
 
-                  this.selectedCountries[index].push(lista);
-                }
+                        this.selectedCountries[index].push(lista);
+                      }
+                    });
+                  });
+                });
+
+                this.groupedCities = [
+                  {
+                    label: 'Germany',
+                    value: 'de',
+                    items: this.listOfLists,
+                  },
+                ];
               });
-            });
-          });
-
-          this.groupedCities = [
-            {
-              label: 'Germany',
-              value: 'de',
-              items: this.listOfLists,
-            },
-          ];
+          }
         });
-      });
     });
   }
 

@@ -10,13 +10,17 @@
         {{ film.original_name }}
       </ng-template>
 
-      <ng-template pTemplate="footer">
-        <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2"
-          [routerLink]="'/tv/'+film.id"></button>
-        <button (click)="addToFavourite(film.id)" pButton pRipple type="button" icon="pi pi-heart"
-          class="p-button-rounded p-button-help"></button>
-        <p-button label="boton" icon="pi pi-search" (click)="op.toggle($event)"></p-button>
-      </ng-template>
+      <div class="grid">
+        <div class="col">
+          <button pButton pRipple icon="pi pi-eye" class="p-button-rounded" [routerLink]="'/tv/'+film.id"></button>
+        </div>
+        <div class="col">
+          <button *ngIf="user" (click)="addToFavourite('tv/'+film.id)" pButton pRipple type="button" icon="pi pi-heart" class="p-button-rounded p-button-help col"></button>
+        </div>
+        <div class="col">
+          <button *ngIf="user" (click)="op.toggle($event)" pButton pRipple type="button" icon="pi pi-bookmark" class="p-button-rounded p-button-warning col"></button>
+        </div>
+      </div>
 
       <p-overlayPanel #op>
         <ng-template pTemplate>
