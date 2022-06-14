@@ -19,11 +19,9 @@ export class ListComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(({ username, listId }) => {
-      this.ls.getMovieListById( listId ).subscribe( list => {
-          list.moviesId!.forEach( movieId => {
-
-            this.cs.getMovieOrTvshowsById( movieId ).subscribe( movie => this.movies.push(movie))
-
+      this.ls.getMovieLists( undefined,username, listId ).subscribe( list => {
+          JSON.parse(list[0].contentId!).forEach( (contentId:string) => {
+            this.cs.getMovieOrTvshowsById( contentId ).subscribe( content => this.movies.push(content))
           })
         })
     });

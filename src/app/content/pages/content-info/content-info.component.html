@@ -1,0 +1,37 @@
+<div class="grid">
+  <main class="lg:col-10 lg:col-offset-1 col-12 grid" style="padding: 1em">
+    <p-card class="md:col-3 col-12 poster">
+      <ng-template pTemplate="content">
+        <img *ngIf="content?.poster_path" style="width: 100%" alt="Card" [src]="'https://image.tmdb.org/t/p/w500' + content?.poster_path">
+      </ng-template>
+    </p-card>
+
+    <p-card class="md:col-9 col-12 contentInfo">
+      <ng-template pTemplate="title">
+        {{ ((typeOfContent === 'movie') ? content?.original_title : content?.original_name) + ' - ' + (content?.release_date | date:'YYYY')}}
+      </ng-template>
+      <ng-template pTemplate="subtitle">
+        {{content?.original_title}}
+      </ng-template>
+      <ng-template pTemplate="content">
+        <p-tabView>
+          <p-tabPanel header="Sinópsis">
+            <p>{{ content?.runtime }} min.</p>
+            <p>{{ content?.overview }}</p>
+            <br>
+            <p><p-chip *ngFor="let genre of content?.genres" [label]='genre.name' styleClass="mr-2 mb-2"></p-chip></p>
+          </p-tabPanel>
+          <p-tabPanel header="Datos">
+            <ul>
+              <li>Frase: {{ content?.tagline }}</li>
+              <li>Países de rodaje: <p-chip *ngFor="let country of content?.production_countries" [label]='country.name' styleClass="mr-2"></p-chip>
+              <li>Idioma original: {{ content?.original_language }}</li>
+              <li>Presupuesto: {{ content?.budget | currency:'USD' }}</li>
+              <li>Ganancias: {{ content?.revenue | currency:'USD' }}</li>
+            </ul>
+          </p-tabPanel>
+        </p-tabView>
+      </ng-template>
+    </p-card>
+  </main>
+</div>

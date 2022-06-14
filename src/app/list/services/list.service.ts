@@ -1,71 +1,36 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
+import { AuthService } from 'src/app/auth/services/auth.service';
+import { ContentService } from 'src/app/shared/services/content.service';
 import { List } from '../interfaces/list.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ListService {
-  private _baseUrl = 'http://localhost:3000';
+  private _baseUrl = 'http://localhost:8000/api';
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private as: AuthService,
+    private cs: ContentService
   ) { }
 
+  public getMovieLists( mode?: boolean, username?: string, user_list_count?: number, id?: number ): Observable<List[]> {
+    let params: string = '?';
 
-  public getMovieLists(): Observable<List[]> {
-    return this.http.get<List[]>(`${this._baseUrl}/lists`)
-  }
+    ( id !== undefined ) && (params += '&id='+id);
+    ( mode !== undefined ) && (params += '&public='+mode);
+    ( username ) && (params += '&username='+username);
+    ( user_list_count ) && (params += '&user_list_count='+user_list_count);
 
-  public getMovieListById( listId: number ): Observable<List> {
-    return this.http.get<List>(`${this._baseUrl}/lists/${ listId }`)
-  }
-
-  public getUserLists( userId: number ): Observable<List[]>{
-    let userLists: List[] = [];
-
-    return this.getMovieLists()
-      .pipe(
-        map( lists => {
-          lists.forEach( list => {
-
-            if( list.userId === userId ) {
-              userLists.push(list)
-            }
-
-          })
-
-          return userLists
-        })
-      )
-
-  }
-
-  public getUserListsByUsername( username: string, limit?: any ): Observable<List[]>{
-    let userLists: List[] = [];
-
-    return this.getMovieLists()
-      .pipe(
-        map( lists => {
-          lists.forEach( list => {
-            if( list.username === username ) {
-              userLists.push(list)
-            }
-          })
-
-          return userLists
-        })
-      )
+    return this.http.get<List[]>(`${this._baseUrl}/list`+params)
   }
 
   public createList( newList: List ): void {
 
-    if( !newList.moviesId ) {
-      newList.moviesId = [];
-    }
-
-    this.http.post<List>(`${this._baseUrl}/lists`, newList)
+    this.http.post<List>(`${this._baseUrl}/list`, newList )
       .subscribe({
         next: resp => console.log(resp),
         error: err => console.log(err),
@@ -73,40 +38,88 @@ export class ListService {
       })
   }
 
-  public deleteList( listId: number): void {
-    this.http.delete(`${ this._baseUrl }/lists/${ listId }`)
+  public deleteList( list: List ): void {
+    this.http.delete(`${this._baseUrl}/list/${ list.id }`)
       .subscribe({
-        next: resp => {}
+        next: resp => console.log(resp)
       })
   }
 
-  public updateList( listId: number, changes: any ) {
-    this.http.patch(`${ this._baseUrl }/lists/${ listId }`, changes)
-      .subscribe({
-        next: resp => {}
-      })
-  }
+  public addContentToList( listInpor: List , contentId: string ): void {
 
-  public addMovieToList( listId: number, movieId: string ): void {
-    let moviesId: string[] | undefined = [];
-
-    this.getMovieListById( listId )
+    this.getMovieLists( undefined, undefined, undefined, listInpor.id! )
       .subscribe( list => {
+        let contentCollection = JSON.parse(list[0].contentId!);
 
-        if( list.moviesId?.indexOf( movieId ) === -1 ) {
-          moviesId = list.moviesId;
+        if( contentCollection?.indexOf( contentId ) === -1 ) {
+          contentCollection?.push( contentId )
 
-          moviesId?.push( movieId )
-
-          this.http.patch<List>(`${ this._baseUrl }/lists/${ listId }`, { moviesId: moviesId } )
+          this.http.patch<List>(`${this._baseUrl}/list/${ list[0].id }/addContent`, { contentId: JSON.stringify(contentCollection) } )
           .subscribe({
-            next: resp => console.log(resp),
+            next: resp => console.log("ContentId: ",resp),
             error: err => console.log(err),
-            complete: () => console.log("Lista creada")
+            complete: () => console.log("Contenido añadido")
           })
         }
       })
+  }
+
+  public saveList( list: List ) {
+    this.as.authVerification().subscribe( user => {
+      const data = { user: user, list: list }
+
+      this.http.post(`${this._baseUrl}/list/save-list`, data)
+        .subscribe({
+          next: resp => console.log(resp),
+          error: err => console.log(err),
+          complete: () => console.log("Lista guardada")
+        })
+    })
+  }
+
+  public getSavedLists( username: string ): Observable<List[]> {
+    return this.http.get<List[]>(`${this._baseUrl}/list/savedLists/${username}`)
+  }
+
+  public addToFavourite( username: string ) {
 
   }
+
+  public updateList( changedList: List ) {
+    this.http.put(`${this._baseUrl}/list/${ changedList.id }`, changedList)
+      .subscribe({
+        next: resp => console.log('Update list',resp)
+      })
+  }
+
+  //NOT
+  //Get content and lists
+  public async getContentAndLists(): Promise<Observable<any>> {
+    let data = {content: null, list: null};
+
+    return this.as.authVerification()
+      .pipe(
+        map( user => {
+          if( user ) {
+            this.getMovieLists(undefined,user.username).subscribe( async (lists:any) => {
+              data.list = lists[0].listas;
+
+              this.cs.popularMoviesOrTv( 'movie' ).subscribe( movies => {
+                data.content = movies.results
+
+                return data;
+              })
+            })
+          } else {
+            this.cs.popularMoviesOrTv( 'movie' ).subscribe( movies => {
+              data.content = movies.results
+
+              return data;
+            })
+          }
+        })
+      )
+  }
+
 
 }

@@ -1,32 +1,28 @@
-<!-- <mat-card fxLayout="row" color="primary" class="header">
-  <div class="left"></div>
-  <div class="right">
-    <button mat-raised-button color="primary">Login</button>
-    <button mat-stroked-button color="accent">Registo</button>
-  </div>
-</mat-card> -->
-<!-- <mat-toolbar color="primary">
-  <span>MLDP</span>
-  {{auth | json }}
-  <span class="example-spacer"></span>
-  <div fxLayoutGap="1vw" class="auth">
-    <button *ngIf="auth" routerLink="user/signin" mat-raised-button color="basic">Login</button>
-    <button *ngIf="auth" routerLink="user/signup" mat-raised-button color="accent">Registo</button>
-    <button *ngIf="auth" mat-mini-fab color="secondary" [matMenuTriggerFor]="menu">
-      <mat-icon>perm_identity</mat-icon>
-    </button>
-  </div>
-</mat-toolbar>
-<mat-menu #menu="matMenu">
-  <button mat-menu-item routerLink='user/bebop23' >Perfil</button>
-  <button mat-menu-item (click)="signout()">Cerrar Sesión</button>
-</mat-menu> -->
 <p-menubar [model]="items">
-  <ng-template  pTemplate="start">
+  <ng-template pTemplate="start">
     <span routerLink="movie/all">MLDP</span>
   </ng-template>
   <ng-template pTemplate="end">
-    <button routerLink="auth/signin" pButton pRipple type="button" label="Login" class="p-button-primary mr-3"></button>
-    <button routerLink="auth/signup" pButton pRipple type="button" label="Registo" class="p-button-outlined p-button-primary"></button>
+    <div class="grid">
+      <div *ngIf="isLoggedOut" class="col-4">
+        <div class="p-inputgroup">
+          <button routerLink="auth/signin" pButton pRipple type="button" label="Login" class="p-button-primary"></button>
+          <button routerLink="auth/signup" pButton pRipple type="button" label="Registo" class="p-button-outlined p-button-primary"></button>
+        </div>
+      </div>
+
+      <div class="col-8 grid p-fluid">
+        <div class="col-12 md:col-5">
+          <p-dropdown inputId="dropdown" [autoDisplayFirst]="false" [options]="options" [(ngModel)]="optionField" optionLabel="value" placeholder="Películas"></p-dropdown>
+        </div>
+
+        <div class="col-12 md:col-7">
+            <div class="p-inputgroup">
+              <input [(ngModel)]="searchQuery" type="text" pInputText placeholder="Buscar..." (keyup.enter)="search()">
+              <button type="button" pButton pRipple icon="pi pi-search" styleClass="p-button-warn" (click)="search()"></button>
+            </div>
+        </div>
+      </div>
+    </div>
   </ng-template>
 </p-menubar>

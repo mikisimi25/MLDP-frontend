@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from 'src/app/auth/services/auth.service';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { ListService } from 'src/app/list/services/list.service';
 import { User } from '../../interfaces/user.interface';
@@ -11,32 +12,35 @@ import { CrudUserService } from '../../services/crud-user.service';
   styleUrls: ['./user-dashboard.component.scss'],
 })
 export class UserDashboardComponent implements OnInit {
+  public ownProfile: boolean = false;
+  public user?: User;
+  public dashboardUser?: User;
+
   public lists: List[] = [];
   public list!: List;
-  private _user?: User;
   public userLists!: List[];
-
-  public get user() {
-    return this._user;
-  }
 
   constructor(
     private ar: ActivatedRoute,
     private us: CrudUserService,
+    private as: AuthService,
     private ls: ListService
   ) {}
 
   ngOnInit(): void {
-    //Load user data and lists of user
-    this.ar.params.subscribe(({ username }) => {
-      this.us.getUserByUsername( username ).subscribe((user) => {
-        if (user) {
-          this._user = user[0];
 
-          this.ls.getUserListsByUsername( username, 5)
-            .subscribe((lists) => (this.userLists = lists));
-        }
+    this.as.authVerification().subscribe( userAuth => {
+      this.ar.params.subscribe(({ username }) => {
+        this.us.getUser( undefined,username ).subscribe((user) => {
+          if (user) {
+            this.dashboardUser = user[0];
+            this.ownProfile = userAuth?.id === user[0].id;
+
+            this.ls.getMovieLists( undefined,username )
+              .subscribe((lists) => (this.userLists = lists));
+          }
+        });
       });
-    });
+    })
   }
 }

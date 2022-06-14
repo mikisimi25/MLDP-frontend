@@ -8,7 +8,7 @@ import { User } from '../../user/interfaces/user.interface';
   providedIn: 'root'
 })
 export class EmailValidatorService implements AsyncValidator{
-  private _apiUrl: string = 'http://localhost:3000';
+  private _apiUrl: string = 'http://localhost:8000/api';
 
   constructor(
     private http: HttpClient

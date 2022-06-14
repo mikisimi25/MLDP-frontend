@@ -8,7 +8,7 @@ import { User } from 'src/app/user/interfaces/user.interface';
   providedIn: 'root'
 })
 export class ValidationsService {
-  private _apiUrl: string = 'http://localhost:3000';
+  private _apiUrl: string = 'http://localhost:8000/api';
   public _emailPattern = '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$';
   public _passwordPattern = '(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}';
 
@@ -16,7 +16,6 @@ export class ValidationsService {
   constructor(
     private http: HttpClient
   ) { }
-
 
   public checkIdentifier( identifier: string ) {
     return this.http.get<User[]>(`${this._apiUrl}/user?username=${identifier}`)

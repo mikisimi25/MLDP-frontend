@@ -13,37 +13,27 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss']
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent {
 
-  public registerForm: FormGroup = this.fb.group({
-    username: ['', [ Validators.required, Validators.minLength(3) ], [ this.usernameValidator ] ],
-    email: ['', [ Validators.required, Validators.pattern(this.validations._emailPattern) ], [ this.emailValidator ] ],
-    password: ['', [ Validators.required, Validators.pattern(this.validations._passwordPattern) ] ],
-    password2: ['', [ Validators.required ] ],
-  }, {
-    validators: [ this.validations.matchPasswords('password','password2') ]
-  })
-
+  public registerForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    private us: CrudUserService,
     private as: AuthService,
     private usernameValidator: UsernameValidatorService,
     private emailValidator: EmailValidatorService,
     private validations: ValidationsService,
     private router: Router
-  ) { }
-
-  ngOnInit(): void {
-    // this.registerForm.reset({
-    //   username: 'bebop23',
-    //   email: 'bebop23@gmail.com',
-    //   password: 'a?M12345',
-    //   password2: 'a?M12345'
-    // })
+  ) {
+    this.registerForm = this.fb.group({
+      username: ['', [ Validators.required, Validators.minLength(3) ], [ this.usernameValidator ] ],
+      email: ['', [ Validators.required, Validators.pattern(this.validations._emailPattern) ], [ this.emailValidator ] ],
+      password: ['', [ Validators.required, Validators.pattern(this.validations._passwordPattern) ] ],
+      password_confirmation: ['', [ Validators.required ] ],
+    }, {
+      validators: [ this.validations.matchPasswords('password','password_confirmation') ]
+    })
   }
-
 
   public invalidField( fieldName: string ): boolean | undefined {
     return this.validations.invalidField( fieldName, this.registerForm );
@@ -55,17 +45,12 @@ export class SignupComponent implements OnInit {
 
   public signUp(): void {
     if( this.registerForm.valid ) {
-      const {password2, ...userData}: {password2:string; userData: User} = this.registerForm.value;
+      const userData = this.registerForm.value;
 
-      this.us.addUser(userData)
-
-      let user = userData.userData;
-
-      this.as.signIn( this.registerForm.get('username')?.value, this.registerForm.get('password')?.value ).subscribe({
-        next: resp => {
-          if( resp ) {
-            this.router.navigate([`./user/${resp.username}`])
-          }
+      this.as.register( userData ).subscribe({
+        next: ({token}) => {
+          this.as.setSession( token )
+          this.router.navigate([`./movie/all`])
         }
       })
 
