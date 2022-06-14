@@ -9,16 +9,12 @@ import { List } from '../../interfaces/list.interface';
 })
 export class ShowlistsComponent implements OnInit {
   public lists: List[] = [];
-  public list!: List;
-  public listDialog: boolean = false;
-  public submitted: boolean = false;
-  public username!: string;
 
   constructor(
     private ls: ListService
   ) { }
 
   ngOnInit(): void {
-    this.ls.getMovieLists().subscribe( lists => this.lists = lists)
+    this.ls.getMovieLists(true).subscribe( lists => this.lists = lists)
   }
 }

@@ -1,0 +1,12 @@
+<div class="grid p-fluid">
+  <div class="col-12 md:col-4">
+    <p-dropdown inputId="dropdown" [autoDisplayFirst]="false" [options]="options" [(ngModel)]="optionField" optionLabel="value" placeholder="Películas"></p-dropdown>
+  </div>
+
+  <div class="col-12 md:col-8">
+      <div class="p-inputgroup">
+        <input [(ngModel)]="searchQuery" type="text" pInputText placeholder="Buscar..." (keyup.enter)="search()">
+        <button type="button" pButton pRipple icon="pi pi-search" styleClass="p-button-warn" (click)="search()"></button>
+      </div>
+  </div>
+</div>

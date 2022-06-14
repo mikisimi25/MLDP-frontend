@@ -1,11 +1,11 @@
 <main class="mt-3 mb-6" style="width: 250px;margin: 0 auto;text-align:center">
   <p-card>
     <h1>Inicio de sesión</h1>
-    <form [formGroup]="signinForm" class="p-fluid grid">
+    <form [formGroup]="signinForm" class="p-fluid grid" (keyup.enter)="signIn()">
       <div class="field col-12 mt-3">
         <span class="p-float-label">
           <input type="text" id="inputtext" pInputText formControlName="identifier" required>
-          <label for="inputtext">Usuario / Email</label>
+          <label for="inputtext">Email</label>
         </span>
         <small class="p-error block" style="height: 7px;">
           <span *ngIf="invalidField('identifier')">{{errorMessage('identifier')}}</span>

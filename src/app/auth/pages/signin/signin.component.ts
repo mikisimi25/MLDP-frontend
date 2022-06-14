@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ValidationsService } from 'src/app/shared/validator/validations.service';
-import { CrudUserService } from 'src/app/user/services/crud-user.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -14,25 +13,22 @@ export class SigninComponent implements OnInit {
 
   public signinForm: FormGroup = this.fb.group({
     identifier: ['', [ Validators.required, Validators.minLength(3) ] ],
-    password: ['', [ Validators.required, Validators.pattern(this.validations._passwordPattern) ] ]
+    password: ['', [ Validators.required] ]
   })
-
 
   constructor(
     private fb: FormBuilder,
     private validations: ValidationsService,
     private router: Router,
-    private us: CrudUserService,
     private as: AuthService
   ) { }
 
   ngOnInit(): void {
     this.signinForm.reset({
-      identifier: 'bebop23',
-      password: 'a?M12345'
+      identifier: 'pepe@gmail.com',
+      password: '123456'
     })
   }
-
 
   public invalidField( fieldName: string ): boolean | undefined {
     return this.validations.invalidField( fieldName, this.signinForm );
@@ -47,15 +43,13 @@ export class SigninComponent implements OnInit {
       const identifier = this.signinForm.get('identifier')?.value;
       const password = this.signinForm.get('password')?.value;
 
-      this.as.signIn( identifier, password )
+      this.as.login( identifier, password )
         .subscribe({
-          next: resp => {
-            if( resp ) {
-              this.router.navigate([`./user/${resp.username}`])
-            } else {
-              this.signinForm.setErrors( { accessFail: true} )
-            }
-          }
+          next: ({token}) => {
+            this.as.setSession( token )
+            this.router.navigate([`./movie/all`])
+          },
+          error: err => this.signinForm.setErrors( { accessFail: true} )
         })
 
     } else {

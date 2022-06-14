@@ -1,25 +1,40 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { PrimengModule } from './primeng/primeng.module';
 import { HeaderComponent } from './components/header/header.component';
-import { MaterialModule } from './material/material.module';
 import { FooterComponent } from './components/footer/footer.component';
+import { SmallInfoCardComponent } from './components/small-info-card/small-info-card.component';
+import { FormsModule } from '@angular/forms';
+import { ShortTitlePipe } from './pipes/short-title.pipe';
+import { CommonModule } from '@angular/common';
+import { ListTableComponent } from './components/list-table/list-table.component';
+import { SearchSelectorComponent } from './components/search-selector/search-selector.component';
+import { UserTableComponent } from './components/user-table/user-table.component';
 
 
 
 @NgModule({
   declarations: [
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    SmallInfoCardComponent,
+    ShortTitlePipe,
+    ListTableComponent,
+    SearchSelectorComponent,
+    UserTableComponent
   ],
   exports: [
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    SmallInfoCardComponent,
+    ListTableComponent,
+    ShortTitlePipe,
+    SearchSelectorComponent,
+    UserTableComponent
   ],
   imports: [
     CommonModule,
-    MaterialModule,
     PrimengModule,
+    FormsModule
   ]
 })
 export class SharedModule { }

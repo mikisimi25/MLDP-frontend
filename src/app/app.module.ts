@@ -8,10 +8,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { SharedModule } from './shared/shared.module';
 import { PrimengModule } from './shared/primeng/primeng.module';
+import { AuthService } from './auth/services/auth.service';
+import { NgHttpLoaderModule } from 'ng-http-loader';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -20,9 +22,10 @@ import { PrimengModule } from './shared/primeng/primeng.module';
     BrowserAnimationsModule,
     FlexLayoutModule,
     SharedModule,
-    PrimengModule
+    PrimengModule,
+    NgHttpLoaderModule.forRoot(),
   ],
-  providers: [],
+  providers: [ AuthService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

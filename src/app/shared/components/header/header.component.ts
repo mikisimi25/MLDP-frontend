@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { take } from 'rxjs';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { User } from 'src/app/user/interfaces/user.interface';
-import { CrudUserService } from 'src/app/user/services/crud-user.service';
 
 @Component({
   selector: 'app-header',
@@ -9,85 +10,106 @@ import { CrudUserService } from 'src/app/user/services/crud-user.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-  _user: User | undefined;
-  items: any = []
+  public items: any = []
+  public userAuth?: User;
+  public isLoggedIn: boolean = false;
+  public isLoggedOut: boolean = true;
 
-  get user() {
-    return this._user
-  }
+  //Search
+  public searchQuery: string = '';
+  public optionField: any;
+  public options: any;
 
   constructor(
     private as: AuthService,
-    private crs: CrudUserService
-  ) { }
-
-  ngOnInit() {
-    this.as.authVerification()
-      .subscribe( user => {
-        this._user = user;
-
-        this.items = [
-          {
-              label:'Películas',
-              icon:'pi pi-fw pi-movie',
-              items: [
-                {
-                  label: 'Populares',
-                  routerLink: `/movie/all`
-                },
-                {
-                  label: 'Buscar',
-                  routerLink: `/movie/search`
-                },
-              ]
-          },
-          {
-              label:'Series',
-              icon:'pi pi-fw pi-movie',
-              items: [
-                {
-                  label: 'Populares',
-                  routerLink: `/tv/all`
-                },
-                {
-                  label: 'Buscar',
-                  routerLink: `/tv/search`
-                },
-              ]
-          },
-          {
-              label:'Listas',
-              icon:'pi pi-fw pi-list',
-              items: [
-                {
-                  label: 'Populares',
-                  routerLink: `/list/all`
-                },
-                {
-                  label: 'Mis listas',
-                  routerLink: `/user/${this.user!.username}/lists`
-                },
-              ]
-          },
-          {
-              label:'Usuario',
-              icon:'pi pi-fw pi-user',
-              items: [
-                  {
-                    label: 'Perfil',
-                    routerLink: `/user/${this.user!.username}`
-                  },
-                  {
-                    label: 'Salir',
-                    command: () => this.signout()
-                  }
-              ]
-          }
-        ];
-      })
+    private router: Router,
+  ) {
   }
 
-  public signout() {
-    this.as.logout()
+  ngOnInit() {
+    this.options = [
+      {value: 'Películas', route: "movie"},
+      {value: 'Series', route: "tv"},
+      {value: 'Usuarios', route: "user"}
+    ];
+
+    this.optionField = this.options[0];
+
+    this.as.setUserData()
+
+    this.as.authVerification().subscribe( userAuth => {
+      this.userAuth = userAuth;
+
+      this.items = [
+        {
+            label:'Películas',
+            icon:'pi pi-fw pi-movie',
+            items: [
+              {
+                label: 'Populares',
+                routerLink: `/movie/all`
+              }
+            ]
+        },
+        {
+            label:'Series',
+            icon:'pi pi-fw pi-movie',
+            items: [
+              {
+                label: 'Populares',
+                routerLink: `/tv/all`
+              }
+            ]
+        },
+        {
+            label:'Listas',
+            icon:'pi pi-fw pi-list',
+            items: [
+              {
+                label: 'Populares',
+                routerLink: `/list/all`
+              },
+              {
+                label: 'Mis listas',
+                routerLink: `/user/${this.as.user?.username}/lists`,
+                visible: this.as.isLoggedIn()
+              },
+              {
+                label: 'Listas guardadas',
+                routerLink: `/user/${this.as.user?.username}/lists/saved`,
+                visible: this.as.isLoggedIn()
+              },
+            ]
+        },
+        {
+            label:'Usuario',
+            icon:'pi pi-fw pi-user',
+            items: [
+                {
+                  label: 'Perfil',
+                  routerLink: `/user/${this.as.user?.username}`
+                },
+                {
+                  label: 'Amigos',
+                  routerLink: `/user/${this.as.user?.username}/friends`
+                },
+                {
+                  label: 'Salir',
+                  command: () => this.as.logout()
+                }
+            ],
+            visible: this.as.isLoggedIn()
+        }
+      ];
+    });
+
+  }
+
+  public search(): void {
+    if(this.searchQuery.trim().length > 0) {
+      this.router.navigate([`/search`], { queryParams: { type: this.optionField.route, q: this.searchQuery }});
+      this.searchQuery = '';
+      this.optionField = this.options[0];
+    }
   }
 }

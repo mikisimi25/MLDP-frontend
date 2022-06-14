@@ -1,0 +1,42 @@
+<p-toast></p-toast>
+
+<p-card>
+
+  <img *ngIf="content.poster_path" style="width: 100%;" alt="Card" [src]="(type !== 'user') ? ('https://image.tmdb.org/t/p/w500' + content.poster_path) : 'content.image'" >
+
+  <ng-template pTemplate="title">
+      {{ ((type === 'movie') ? content.original_title : ((type === 'tv') ? content.original_name : content.username)) | shortTitle}}
+  </ng-template>
+
+  <div class="grid">
+    <div class="col">
+      <button pButton pRipple icon="pi pi-eye" class="p-button-rounded m-0" [routerLink]="'/'+type+'/'+((type !== 'user') ? content.id : content.username)"></button>
+    </div>
+    <div class="col">
+      <button *ngIf="userAuth?.username !== content.username && this.type === 'user' " pButton pRipple icon="pi pi-user-plus" class="p-button-rounded m-0" (click)="addFriend(content.id)"></button>
+    </div>
+    <div class="col" *ngIf="userAuth?.username && crud && this.type !== 'user'">
+      <button (click)="addToFavourite(type+'/'+content.id)" pButton pRipple type="button" icon="pi pi-heart" class="p-button-rounded p-button-help col"></button>
+    </div>
+    <div class="col" *ngIf="userAuth?.username && crud && this.type !== 'user'">
+      <button (click)="op.toggle($event)" pButton pRipple type="button" icon="pi pi-bookmark" class="p-button-rounded p-button-warning col"></button>
+    </div>
+  </div>
+
+  <p-overlayPanel #op>
+    <ng-template pTemplate>
+        <p-listbox [options]="groupedLists" [group]="true" [(ngModel)]="selectedLists" [metaKeySelection]="false"
+          [checkbox]="true" [filter]="true" [multiple]="true" [listStyle]="{'max-height':'250px'}"
+          [style]="{'width':'15rem'}" optionLabel="title" (onClick)="showSuccess(content.id,selectedLists)" >
+
+        <ng-template let-group pTemplate="group">
+          <div class="flex align-items-center">
+            <span>{{group.label}}</span>
+          </div>
+        </ng-template>
+
+      </p-listbox>
+    </ng-template>
+  </p-overlayPanel>
+
+</p-card>
