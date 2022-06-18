@@ -20,6 +20,7 @@
     "@angular/platform-browser": "~13.1.0",
     "@angular/platform-browser-dynamic": "~13.1.0",
     "@angular/router": "~13.1.0",
+    "axios": "^0.27.2",
     "font-awesome": "^4.7.0",
     "ng-http-loader": "^11.0.1",
     "primeflex": "^3.1.3",

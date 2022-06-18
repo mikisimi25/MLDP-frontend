@@ -1,43 +1,83 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ContentService } from 'src/app/shared/services/content.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ListService } from 'src/app/list/services/list.service';
-import { List } from 'src/app/list/interfaces/list.interface';
 import { AuthService } from 'src/app/auth/services/auth.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-show-content',
   templateUrl: './show-content.component.html',
   styleUrls: ['./show-content.component.scss']
 })
-export class ShowContentComponent implements OnInit {
-  public showContent: any[] = [];
-  public listOfLists: List[] = [];
+export class ShowContentComponent {
+  private _contentCollection: any;
   public typeOfContent: string = this.activatedRoute.snapshot.data['content'];
+  private _groupedLists: any = [];
+
+  public get contentCollection() {
+    return this._contentCollection;
+  }
+
+  public get groupedLists() {
+    return this._groupedLists;
+  }
 
   constructor(
-    private ls: ListService,
-    private as: AuthService,
     private activatedRoute: ActivatedRoute,
-    private cs: ContentService
+    private cs: ContentService,
+    private router: Router,
+    private ls: ListService,
+    private as: AuthService
   ) {
-    this.as.authVerification().subscribe( user => {
-      if( user ) {
-        this.ls.getMovieLists(undefined,user?.username).subscribe( (lists:any) => {
-          this.cs.popularMoviesOrTv( this.typeOfContent ).subscribe( content => {
-            this.showContent = content.results;
-            this.listOfLists = lists;
-          })
+    this.activatedRoute.queryParams.subscribe(({page}) => {
+      this.cs.popularMoviesOrTv( this.typeOfContent,page ).subscribe( content => this._contentCollection = content)
+    })
 
-        })
-      } else {
-        this.cs.popularMoviesOrTv( this.typeOfContent ).subscribe( content => {
-          this.showContent = content.results;
-        })
+    if(this.as.getToken()) {
+      setTimeout(() => {
+        this.as.setUserListCollection()
+      }, 1000)
+    } else {
+      this.as.setUserListCollection()
+    }
+  }
+
+  public paginate( event:any ) {
+    const page = event.page+1;
+
+    this.cs.popularMoviesOrTv( this.typeOfContent, page ).subscribe( content => this._contentCollection = content)
+
+    this.scrollToTop()
+
+    //Changing url query
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams: { page: page },
+        queryParamsHandling: 'merge'
       }
+    );
+  }
+
+  public setUserListCollection() {
+    this.ls.getMovieLists(undefined,this.as.user?.username).subscribe( (lists:any) => {
+
+      this._groupedLists = [
+        {
+          label: 'Mis Listas',
+          value: 'ml',
+          items: lists
+        }
+      ];
     })
   }
 
-  ngOnInit() {
+  private scrollToTop() {
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+     });
   }
 }

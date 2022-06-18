@@ -25,8 +25,8 @@ export class SigninComponent implements OnInit {
 
   ngOnInit(): void {
     this.signinForm.reset({
-      identifier: 'pepe@gmail.com',
-      password: '123456'
+      identifier: 'bebop23@gmail.com',
+      password: 'password'
     })
   }
 

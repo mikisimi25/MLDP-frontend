@@ -3,8 +3,9 @@ import { MessageService } from 'primeng/api';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { ListService } from 'src/app/list/services/list.service';
 import { ConfirmationService } from 'primeng/api';
-import { AuthService } from 'src/app/auth/services/auth.service';
 import { User } from 'src/app/user/interfaces/user.interface';
+import { AuthService } from 'src/app/auth/services/auth.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'component-list-table',
@@ -28,26 +29,46 @@ export class ListTableComponent implements OnInit{
   public list: List = <List>{};
   public listDialog: boolean = false;
   public submitted: boolean = false;
-  public ownList: boolean = false;
-  public userAuth?: User;
+  public _author: boolean = true;
+  public reservedLists: number[] = [1,2,3,4,5,6,7,8,9,10]
+
+  public get isLoggedIn() {
+    return this.as.isLoggedIn;
+  }
+
+  public get isLoggedOut() {
+    return this.as.isLoggedOut;
+  }
+
+  public get userAuth() {
+    return this.as.user;
+  }
 
   constructor(
     private ls: ListService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private as: AuthService
-  ) {
-    this.as.authVerification().subscribe( userAuth => {
-      this.userAuth = userAuth
-
-      this.ownList = this.userAuth?.id === this.userLists?.id;
-    });
-  }
+    private as: AuthService,
+    private activatedRoute: ActivatedRoute,
+  ) {  }
 
   ngOnInit(){
-    this.addList = false || this.crud;
-    this.editList = false || this.crud;
-    this.deleteList = false || this.crud;
+    if(this.as.getToken()) {
+      setTimeout(() => {
+        this.getCollection()
+      }, 1000)
+    } else {
+      this.getCollection()
+    }
+  }
+
+  private getCollection() {
+    this.activatedRoute.params.subscribe(({ username }) => {
+      this.crud = (this.userAuth.username === username) && this.crud;
+      this.addList = false || this.crud;
+      this.editList = false || this.crud;
+      this.deleteList = false || this.crud;
+    })
   }
 
   public openNew() {
@@ -56,12 +77,13 @@ export class ListTableComponent implements OnInit{
       this.listDialog = true;
   }
 
-  public editProduct( list: List ) {
+  public updateList( list: List ) {
+    (list.public) && (list.public = true);
     this.list = {...list};
     this.listDialog = true;
   }
 
-  public deleteProduct( list: List ) {
+  public destroyList( list: List ) {
     this.confirmationService.confirm({
         message: '¿Estás seguro de querer eliminar la lista ' + list.title + '?',
         header: 'Confirmar',
@@ -81,25 +103,26 @@ export class ListTableComponent implements OnInit{
     this.submitted = false;
   }
 
-  public saveProduct() {
-      this.submitted = true;
+  public storeList() {
+    this.submitted = true;
 
-      if (this.list.title.trim()) {
-          if (this.list.id) {
-              this.lists[this.findIndexById(this.list.id)] = this.list;
-              this.ls.updateList( this.list )
-              this.messageService.add({severity:'success', summary: 'Actualizada', detail: 'Lista actualizada', life: 3000});
-          } else {
-            this.list.username = this.userAuth?.username;
-            this.ls.createList( this.list );
-            this.lists.push( this.list );
-            this.messageService.add({severity:'success', summary: 'Creado', detail: `Lista ${ this.list.title } creada.`, life: 3000});
-          }
+    if (this.list.title.trim()) {
+        if (this.list.id) {
+            this.lists[this.findIndexById(this.list.id)] = this.list;
+            this.ls.updateList( this.list )
+            this.messageService.add({severity:'success', summary: 'Actualizada', detail: 'Lista actualizada', life: 3000});
+        } else {
+          this.list.username = this.as.user!.username;
+          console.log("🚀 ~ file: list-table.component.ts ~ line 98 ~ ListTableComponent ~ saveList ~ this.list.username", this.list.username)
+          this.ls.createList( this.list );
+          this.lists.push( this.list );
+          this.messageService.add({severity:'success', summary: 'Creado', detail: `Lista ${ this.list.title } creada.`, life: 3000});
+        }
 
-          this.lists = [...this.lists];
-          this.listDialog = false;
-          this.list = <List>{};
-      }
+        this.lists = [...this.lists];
+        this.listDialog = false;
+        this.list = <List>{};
+    }
   }
 
   public saveList( list: List ) {

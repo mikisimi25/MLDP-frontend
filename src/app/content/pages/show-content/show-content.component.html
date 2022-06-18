@@ -1,11 +1,13 @@
-<div class="grid">
+<div class="grid" id="a">
   <main class="lg:col-10 lg:col-offset-1 col-12 grid" style="margin: 0 auto;">
-    <component-small-info-card *ngFor="let content of showContent"
+    <component-small-info-card *ngFor="let content of contentCollection?.results"
                         [content]="content"
-                        [listOfLists]="listOfLists"
                         [type]="typeOfContent"
                         class="lg:col-2 md:col-3 sm:col-4 col-12"
                         >
     </component-small-info-card>
   </main>
+  <footer class="col-12 grid">
+    <p-paginator [rows]="20" [totalRecords]="(contentCollection?.total_results < (500*20)) ? contentCollection?.total_results : (500*20)" [pageLinkSize]="5" (onPageChange)="paginate($event)" class="lg:col-10 lg:col-offset-1 col-12 "></p-paginator>
+  </footer>
 </div>

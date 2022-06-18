@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { AuthService } from 'src/app/auth/services/auth.service';
-import { List } from 'src/app/list/interfaces/list.interface';
-import { ListService } from 'src/app/list/services/list.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Paginator } from 'primeng/paginator';
 import { ContentService } from 'src/app/shared/services/content.service';
 import { CrudUserService } from '../../../user/services/crud-user.service';
 
@@ -12,7 +10,7 @@ import { CrudUserService } from '../../../user/services/crud-user.service';
   styleUrls: ['./search-result.component.scss']
 })
 export class SearchResultComponent implements OnInit{
-  private user: any;
+  @ViewChild('paginator', {static: false}) paginator!: Paginator;
 
   //Search
   public searchQuery: string = '';
@@ -20,15 +18,26 @@ export class SearchResultComponent implements OnInit{
   public options: any;
 
   //Content
-  public typeContent: string = '';
-  public showContent: any[] = [];
-  public listOfLists: List[] = [];
+  private _typeContent: string = '';
+  private page: number = 1;
+  private _contentCollection: any = {result: []};
+
+  public get contentCollection() {
+    return this._contentCollection;
+  }
+
+  public get typeContent() {
+    return this._typeContent;
+  }
+
+  public get totalRecords() {
+    console.log("🚀 ~ file: search-result.component.ts ~ line 31 ~ SearchResultComponent ~ gettotalRecords ~ totalRecords", (this.contentCollection?.total_results < (500*20)) ? this.contentCollection?.total_results : (500*20))
+    return (this.contentCollection?.total_results < (500*20)) ? this.contentCollection?.total_results : (500*20);
+  }
 
   constructor(
     private cs: ContentService,
-    private as: AuthService,
     private activatedRoute: ActivatedRoute,
-    private ls: ListService,
     private crs: CrudUserService,
     private router: Router
   ) {
@@ -40,13 +49,10 @@ export class SearchResultComponent implements OnInit{
 
     this.optionField = this.options[0];
 
-    this.as.authVerification().subscribe( user => {
-      this.user = user;
-    })
-
-    this.activatedRoute.queryParams.subscribe(({type, q}) => {
+    this.activatedRoute.queryParams.subscribe(({type, q, page}) => {
       this.searchQuery = q;
-      this.typeContent = type;
+      this._typeContent = type;
+      this.page = page;
       this.optionField = this.options.find( (option: any) => option.route === this.typeContent);
     })
 
@@ -57,46 +63,59 @@ export class SearchResultComponent implements OnInit{
   }
 
   public search(): void {
+    this.optionChanged({});
+    this.paginator.changePageToFirst(event);
     this.searchResult();
   }
 
   public searchResult() {
-    this.typeContent = this.optionField.route;
+    this._typeContent = this.optionField.route;
 
     //Changing url query
     this.router.navigate(
       [],
       {
         relativeTo: this.activatedRoute,
-        queryParams: { type: this.typeContent, q: this.searchQuery },
+        queryParams: { type: this.typeContent, q: this.searchQuery, page: this.page },
         queryParamsHandling: 'merge'
       }
     );
 
-
     if ( this.typeContent === 'user' ) {
       this.crs.getUser( undefined,undefined,undefined, this.searchQuery ).subscribe( users => {
-        this.showContent = [];
-        this.showContent = users;
+        this._contentCollection.results = [];
+        this._contentCollection.results = users;
       })
     } else {
-      if( this.user ) {
-          this.ls.getMovieLists(undefined,this.user.username).subscribe( (lists:any) => {
-            this.listOfLists = lists;
-
-            this.getContent()
-          })
-      } else {
-        this.getContent()
-      }
+      this.getContent()
     }
   }
 
   private getContent() {
-    this.cs.getMovieOrTvshowsSearchResult( this.typeContent, this.searchQuery ).subscribe( content => {
-      this.showContent = [];
-      this.showContent = content.results;
+    this.cs.getMovieOrTvshowsSearchResult( this.typeContent, this.searchQuery,this.page ).subscribe( content => {
+      this._contentCollection.results = [];
+      this._contentCollection = content;
     })
+  }
+
+  public paginate( event:any ) {
+    this.page = event.page+1;
+
+    this.searchResult()
+
+    this.scrollToTop()
+  }
+
+  private scrollToTop() {
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+     });
+  }
+
+  public optionChanged( event: any) {
+    this.page = 1;
   }
 
 }

@@ -1,9 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { ListService } from 'src/app/list/services/list.service';
-import { User } from 'src/app/user/interfaces/user.interface';
 import { CrudUserService } from 'src/app/user/services/crud-user.service';
 
 @Component({
@@ -12,50 +11,48 @@ import { CrudUserService } from 'src/app/user/services/crud-user.service';
   styleUrls: ['./small-info-card.component.scss'],
   providers: [MessageService]
 })
-export class SmallInfoCardComponent implements OnInit {
+export class SmallInfoCardComponent {
   @Input() content!: any;
   @Input() type!: string;
   @Input() crud: boolean = true;
-  @Input() listOfLists?: List[];
 
-  public groupedLists!: any[];
   public selectedList: any;
   public selectedLists: any = [];
   public sliceOption!: number;
-  public userAuth?: User;
+
+  public get user() {
+    return this.as.user;
+  }
+
+  public get groupedLists() {
+    this.uploadChecks(this.as.groupedLists)
+    return this.as.groupedLists;
+  }
+
+  public get isLoggedIn() {
+    return this.as.isLoggedIn;
+  }
 
   constructor(
     private ls: ListService,
     private messageService: MessageService,
+    private cruds: CrudUserService,
     private as: AuthService,
-    private cruds: CrudUserService
-  ) {
-    this.as.authVerification().subscribe( userAuth => this.userAuth = userAuth);
-  }
+  ) {  }
 
-  ngOnInit() {
-    if( this.type !== "user" ) {
-      this.sliceOption = ( this.type == 'movie' ) ? 6 : 3;
+  uploadChecks( prueba: any ) {
+    this.sliceOption = ( this.type == 'movie' ) ? 6 : 3;
 
-      this.listOfLists?.forEach( (lista:any) => {
-        JSON.parse(lista.contentId)?.forEach( (movieId: any) => {
-          movieId = movieId.toString().slice(this.sliceOption);
+    prueba[0].items.forEach( (lista:any) => {
+      JSON.parse(lista.contentId)?.forEach( (movieId: any) => {
+        movieId = movieId.toString().slice(this.sliceOption);
 
-          if( movieId == this.content.id) {
-            this.selectedLists.push(lista)
-          }
+        if( movieId == this.content.id) {
+          this.selectedLists.push(lista)
+        }
 
-        })
       })
-
-      this.groupedLists = [
-          {
-            label: 'Mis Listas',
-            value: 'ml',
-            items: this.listOfLists
-          }
-      ];
-    }
+    })
   }
 
   public showSuccess( movieId: number, list: List[]) {
@@ -70,12 +67,17 @@ export class SmallInfoCardComponent implements OnInit {
 
   }
 
-  public addToFavourite( movieId: string ) {
-    this.ls.addContentToList( <List>{username: this.userAuth?.username, id: 1}, movieId )
+  public addToViewed( movieId: string ) {
+    this.ls.addContentToList( <List>{username: this.user?.username, user_list_count: 2}, movieId )
+      .subscribe( list => {
+        this.selectedLists.push(list)
+        this.selectedLists = [...this.selectedLists]
+        this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
+      })
   }
 
   public addFriend( userId: number ) {
-    this.cruds.addFriend( this.userAuth?.id!, userId );
+    this.cruds.addFriend( this.user?.id!, userId );
     this.messageService.add({severity:'success', summary: 'Solicitud de amistad enviadad'});
   }
 

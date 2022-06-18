@@ -30,6 +30,9 @@ import { ChipModule } from 'primeng/chip';
 import {TabViewModule} from 'primeng/tabview';
 import {PasswordModule} from 'primeng/password';
 import {InputSwitchModule} from 'primeng/inputswitch';
+import {TooltipModule} from 'primeng/tooltip';
+import {PaginatorModule} from 'primeng/paginator';
+import {ScrollTopModule} from 'primeng/scrolltop';
 
 @NgModule({
   exports: [
@@ -63,7 +66,10 @@ import {InputSwitchModule} from 'primeng/inputswitch';
     ChipModule,
     TabViewModule,
     PasswordModule,
-    InputSwitchModule
+    InputSwitchModule,
+    TooltipModule,
+    PaginatorModule,
+    ScrollTopModule
   ],
   providers: [ MessageService, ConfirmationService]
 })

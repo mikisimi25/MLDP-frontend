@@ -1,0 +1,27 @@
+:host ::ng-deep {
+  img {
+    cursor: pointer;
+  }
+
+  .p-card,.p-card-footer,.p-card-content {
+    padding: 0!important;
+  }
+
+  .p-card-title {
+    width: 100%; /* the element needs a fixed width (in px, em, %, etc) */
+    height: 35px;
+    overflow: hidden; /* make sure it hides the content that overflows */
+    white-space: nowrap; /* don't break the line */
+    text-overflow: ellipsis; /* give the beautiful '...' effect */
+  }
+
+  .p-card-content {
+    height: 311.78px;
+    overflow: hidden;
+
+    img {
+      height: 100%;
+    }
+  }
+
+}

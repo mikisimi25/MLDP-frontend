@@ -17,13 +17,13 @@ export class AuthGuard implements CanActivate, CanLoad {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    return this.as.isLoggedOut();
+    return this.as.isLoggedOut;
   }
 
   canLoad(
     route: Route,
     segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    return this.as.isLoggedOut();
+    return this.as.isLoggedOut;
   }
 }

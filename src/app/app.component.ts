@@ -14,6 +14,7 @@ export class AppComponent implements OnInit{
     private as: AuthService,
     private primengConfig: PrimeNGConfig
   ) {
+    this.as.recoverUserData()
   }
 
   ngOnInit() {

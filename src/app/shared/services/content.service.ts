@@ -16,11 +16,11 @@ export class ContentService {
     private http: HttpClient
   ) { }
 
-  public popularMoviesOrTv( type: string ): Observable<any> {
+  public popularMoviesOrTv( type: string, page: number = 1 ): Observable<any> {
     const params = new HttpParams()
       .set('api_key',this._token)
       .set('language','es')
-      .set('page',1)
+      .set('page',page)
 
     if( type === 'movie' ) {
       return this.http.get<any>(`${this._baseUrl}/3/movie/popular`, { params })
@@ -45,12 +45,12 @@ export class ContentService {
       return this.http.get(`${this._baseUrl}/3/${contentId}`, { params })
   }
 
-  public getMovieOrTvshowsSearchResult( type: string, query: string ): Observable<any> {
+  public getMovieOrTvshowsSearchResult( type: string, query: string, page: number = 1 ): Observable<any> {
     const params = new HttpParams()
       .set('api_key',this._token)
       .set('language','es')
       .set('query',query)
-      .set('page',1)
+      .set('page',page)
       .set('include_adult',false)
 
       if( type === 'movie' ) {
