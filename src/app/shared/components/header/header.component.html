@@ -4,14 +4,14 @@
   </ng-template>
   <ng-template pTemplate="end">
     <div class="grid">
-      <div *ngIf="isLoggedOut" class="col-4">
+      <div *ngIf="!isLoggedIn" class="col-4">
         <div class="p-inputgroup">
           <button routerLink="auth/signin" pButton pRipple type="button" label="Login" class="p-button-primary"></button>
           <button routerLink="auth/signup" pButton pRipple type="button" label="Registo" class="p-button-outlined p-button-primary"></button>
         </div>
       </div>
 
-      <div class="col-8 grid p-fluid">
+      <div class="grid p-fluid" [ngClass]="!isLoggedIn ? 'col-8' : 'col-12'">
         <div class="col-12 md:col-5">
           <p-dropdown inputId="dropdown" [autoDisplayFirst]="false" [options]="options" [(ngModel)]="optionField" optionLabel="value" placeholder="Películas"></p-dropdown>
         </div>

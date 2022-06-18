@@ -34,12 +34,12 @@
         <td>
           <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2"
             [routerLink]="'/user/'+list.username+'/list/'+list.id"></button>
-          <button *ngIf="list.username !== userAuth?.username" pButton pRipple icon="pi pi-heart" class="p-button-rounded p-button-warning mr-2"
+          <button *ngIf="isLoggedIn && (list.username !== userAuth?.username)" pButton pRipple icon="pi pi-heart" class="p-button-rounded p-button-warning mr-2"
             (click)="saveList(list)"></button>
           <button *ngIf="editList" pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
-            (click)="editProduct(list)"></button>
-          <button *ngIf="deleteList" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-            (click)="deleteProduct(list)"></button>
+            (click)="updateList(list)"></button>
+          <button *ngIf="deleteList && (!reservedLists.includes(list.user_list_count))" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+            (click)="destroyList(list)"></button>
         </td>
       </tr>
     </ng-template>
@@ -52,12 +52,12 @@
   </p-table>
 </div>
 
-<p-dialog [(visible)]="listDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true"
+<p-dialog [(visible)]="listDialog" [style]="{width: '450px'}" header="List Details" [modal]="true"
   styleClass="p-fluid">
   <ng-template pTemplate="content">
     <div class="field">
       <label for="title">Title</label>
-      <input type="text" pInputText id="title" [(ngModel)]="list.title" required autofocus />
+      <input type="text" pInputText id="title" [(ngModel)]="list.title" required autofocus disabled="(reservedLists.includes(list.user_list_count))" />
       <small class="p-error" *ngIf="submitted && !list.title">Title is required.</small>
     </div>
     <div class="field">
@@ -72,7 +72,7 @@
 
   <ng-template pTemplate="footer">
     <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-    <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
+    <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" (click)="storeList()"></button>
   </ng-template>
 </p-dialog>
 

@@ -2,7 +2,7 @@
   <main class="lg:col-10 lg:col-offset-1 col-12 grid" style="margin: 0 auto;">
     <component-small-info-card *ngFor="let content of movies"
                         [content]="content"
-                        [crud]="false"
+                        [crud]="true && author"
                         type="tv"
                         class="lg:col-2 md:col-3 sm:col-4 col-12"
                         >

@@ -14,14 +14,6 @@ const routes: Routes = [
     path: 'list',
     loadChildren: () => import('./list/list.module').then( m => m.ListModule)
   },
-  /*{
-    path: 'movie',
-    loadChildren: () => import('./movie/movie.module').then( m => m.MovieModule)
-  },
-  {
-    path: 'tv',
-    loadChildren: () => import('./tvshow/tvshow.module').then( m => m.TvShowModule)
-  },*/
   {
     path: 'movie',
     data: { content: 'movie' },
@@ -35,6 +27,14 @@ const routes: Routes = [
   {
     path: 'search',
     loadChildren: () => import('./content/content.module').then( m => m.ContentModule)
+  },
+  {
+    path: 'test',
+    loadChildren: () => import('./test/test.module').then( m => m.TestModule)
+  },
+  {
+    path: '**',
+    redirectTo: 'movie/all'
   }
 ];
 

@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable, of, tap } from 'rxjs';
+import { map, Observable, of, Subject } from 'rxjs';
+import { ListService } from 'src/app/list/services/list.service';
 import { ValidationsService } from 'src/app/shared/validator/validations.service';
 import { User } from '../../user/interfaces/user.interface';
 import { CrudUserService } from '../../user/services/crud-user.service';
@@ -11,19 +12,39 @@ import { CrudUserService } from '../../user/services/crud-user.service';
 export class AuthService {
 
   private _url = 'http://localhost:8000/api';
-  private _user: User | undefined = undefined;
-  public isLogged: boolean = false;
+  private _user: User | undefined;
+  private _isLogged: boolean = false;
+  private _items: any;
+  private _groupedLists?: any[] = [];
 
   public get user() {
-    console.log("🚀 ~ file: auth.service.ts ~ line 15 ~ AuthService ~ _user", this._user)
-    return this._user;
+    return {...this._user};
+  }
+
+  public get isLoggedIn() {
+    return this._isLogged;
+  }
+
+  public get isLoggedOut() {
+    return !this._isLogged;
+  }
+
+  public get items() {
+    return this._items;
+  }
+
+  public get groupedLists() {
+    return this._groupedLists;
   }
 
   constructor(
     private http: HttpClient,
     private vs: ValidationsService,
-    private crd: CrudUserService
-  ) { }
+    private crd: CrudUserService,
+    private ls: ListService,
+  ) {
+    this.setMenuItems()
+  }
 
   public login( email:string, password:string ): Observable<any> {
     return this.http.post(`${this._url}/user/login`, {email, password})
@@ -34,9 +55,8 @@ export class AuthService {
   }
 
   public setSession( token: string ): void {
-    console.log("🚀 ~ file: auth.service.ts ~ line 39 ~ AuthService ~ setSession ~ token", token)
     localStorage.setItem( 'token', JSON.stringify(token) )
-    this.setUserData()
+    this.setUserData();
   }
 
   public getToken(): string | null {
@@ -47,47 +67,37 @@ export class AuthService {
     const params = new HttpParams()
       .set('token',this.getToken()!);
 
-    this.http.get<User>(`${this._url}/user/authenticated`,{params})
-      .subscribe({
-        next: user => {
-          this._user = user;
-          console.log("🚀 ~ file: auth.service.ts ~ line 51 ~ AuthService ~ setUserData ~ user", user)
-          this.isLogged = true;
-        },
-        error: err => console.error(err)
-      })
+      this.http.get<any>(`${this._url}/user/authenticated`,{params})
+        .subscribe({
+          next: data => {
+            this._user = {...data.user};
+            console.log("🚀 ~ file: auth.service.ts ~ line 74 ~ AuthService ~ setUserData ~ this._user", this._user)
+            this._isLogged = true;
+            this.setMenuItems()
+            this.setUserListCollection()
+          },
+          error: err => console.error(err)
+        })
   }
 
-  // public setUserData() {
-  //   const params = new HttpParams()
-  //     .set('token',this.getToken()!);
+  public setUserListCollection() {
+    this.ls.getMovieLists(undefined,this.user?.username).subscribe( (lists:any) => {
 
-  //   return this.http.get<User>(`${this._url}/user/authenticated`,{params})
-  //   .pipe(
-  //     tap({
-  //       next: user => {
-  //         this._user = user;
-  //         this.isLogged = true;
-  //         console.log("🚀 ~ file: auth.service.ts ~ line 51 ~ AuthService ~ setUserData ~ user", user)
-  //         return user;
-  //       },
-  //       error: err => null
-  //     })
-  //   )
-  // }
+      this._groupedLists = [
+        {
+          label: 'Mis Listas',
+          value: 'ml',
+          items: lists
+        }
+      ];
+    })
+  }
 
   public logout(): void {
-    this.isLogged = false;
+    this._isLogged = false;
     this._user = undefined;
     localStorage.removeItem( 'token' )
-  }
-
-  public isLoggedIn(): boolean{
-    return this.isLogged;
-  }
-
-  public isLoggedOut(): boolean {
-      return !this.isLoggedIn();
+    this.setMenuItems()
   }
 
   public recoverUserData() {
@@ -101,7 +111,7 @@ export class AuthService {
       return this.crd.getUser( parseInt(localStorage.getItem('token')!) )
         .pipe(
           map( user => {
-            this._user = user[0];
+            // this._user = user[0];
             // console.log('authVerification2',this._user);
             // console.log('user',this.user)
 
@@ -119,5 +129,69 @@ export class AuthService {
     } else {
       return of(undefined)
     }
+  }
+
+  setMenuItems() {
+    this._items = [
+      {
+          label:'Películas',
+          icon:'pi pi-fw pi-movie',
+          items: [
+            {
+              label: 'Populares',
+              routerLink: `/movie/all`
+            }
+          ]
+      },
+      {
+          label:'Series',
+          icon:'pi pi-fw pi-movie',
+          items: [
+            {
+              label: 'Populares',
+              routerLink: `/tv/all`
+            }
+          ]
+      },
+      {
+          label:'Listas',
+          icon:'pi pi-fw pi-list',
+          items: [
+            {
+              label: 'Populares',
+              routerLink: `/list/all`
+            },
+            {
+              label: 'Mis listas',
+              routerLink: `/user/${this.user?.username}/lists`,
+              visible: this.isLoggedIn
+            },
+            {
+              label: 'Listas guardadas',
+              routerLink: `/user/${this.user?.username}/lists/saved`,
+              visible: this.isLoggedIn
+            },
+          ]
+      },
+      {
+          label:'Usuario',
+          icon:'pi pi-fw pi-user',
+          items: [
+              {
+                label: 'Perfil',
+                routerLink: `/user/${this.user?.username}`
+              },
+              {
+                label: 'Amigos',
+                routerLink: `/user/${this.user?.username}/friends`
+              },
+              {
+                label: 'Salir',
+                command: () => this.logout()
+              }
+          ],
+          visible: this.isLoggedIn
+      }
+    ];
   }
 }
