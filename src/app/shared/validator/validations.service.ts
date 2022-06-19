@@ -1,24 +1,23 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
-import { map, Observable, switchMap, tap } from 'rxjs';
+import { map } from 'rxjs';
 import { User } from 'src/app/user/interfaces/user.interface';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ValidationsService {
-  private _apiUrl: string = 'http://localhost:8000/api';
   public _emailPattern = '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$';
   public _passwordPattern = '(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}';
-
 
   constructor(
     private http: HttpClient
   ) { }
 
   public checkIdentifier( identifier: string ) {
-    return this.http.get<User[]>(`${this._apiUrl}/user?username=${identifier}`)
+    return this.http.get<User[]>(`${environment.laravelApiURL}/user?username=${identifier}`)
       .pipe(
         map(
           userArray => ( userArray.length === 0) ? -1 : userArray[0].id
@@ -27,7 +26,7 @@ export class ValidationsService {
   }
 
   public checkUser( identifier: string, password: string ) {
-    return this.http.get<User[]>(`${this._apiUrl}/user?username=${identifier}`)
+    return this.http.get<User[]>(`${environment.laravelApiURL}/user?username=${identifier}`)
       .pipe(
         map( user => {
           //Si el usuario existe

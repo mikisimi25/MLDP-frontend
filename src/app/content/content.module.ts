@@ -8,14 +8,13 @@ import { PrimengModule } from '../shared/primeng/primeng.module';
 import { ContentInfoComponent } from './pages/content-info/content-info.component';
 import { FormsModule } from '@angular/forms';
 import { ShowContentComponent } from './pages/show-content/show-content.component';
-import { ShortTitlePipe } from '../shared/pipes/short-title.pipe';
 
 
 @NgModule({
   declarations: [
     SearchResultComponent,
     ContentInfoComponent,
-    ShowContentComponent
+    ShowContentComponent,
   ],
   imports: [
     CommonModule,

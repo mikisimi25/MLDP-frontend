@@ -31,7 +31,6 @@ export class SearchResultComponent implements OnInit{
   }
 
   public get totalRecords() {
-    console.log("🚀 ~ file: search-result.component.ts ~ line 31 ~ SearchResultComponent ~ gettotalRecords ~ totalRecords", (this.contentCollection?.total_results < (500*20)) ? this.contentCollection?.total_results : (500*20))
     return (this.contentCollection?.total_results < (500*20)) ? this.contentCollection?.total_results : (500*20);
   }
 
@@ -64,12 +63,12 @@ export class SearchResultComponent implements OnInit{
 
   public search(): void {
     this.optionChanged({});
-    this.paginator.changePageToFirst(event);
     this.searchResult();
   }
 
   public searchResult() {
     this._typeContent = this.optionField.route;
+    this._contentCollection = {results: null};
 
     //Changing url query
     this.router.navigate(
@@ -83,18 +82,17 @@ export class SearchResultComponent implements OnInit{
 
     if ( this.typeContent === 'user' ) {
       this.crs.getUser( undefined,undefined,undefined, this.searchQuery ).subscribe( users => {
-        this._contentCollection.results = [];
         this._contentCollection.results = users;
       })
     } else {
-      this.getContent()
+      this.getContent();
     }
   }
 
   private getContent() {
     this.cs.getMovieOrTvshowsSearchResult( this.typeContent, this.searchQuery,this.page ).subscribe( content => {
-      this._contentCollection.results = [];
       this._contentCollection = content;
+      this.paginator.changePageToFirst(event);
     })
   }
 

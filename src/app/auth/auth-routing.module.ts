@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuardExternal } from './guards/authExternal.guard';
 import { SigninComponent } from './pages/signin/signin.component';
 import { SignupComponent } from './pages/signup/signup.component';
 
@@ -17,8 +17,8 @@ const routes: Routes = [
         component: SigninComponent
       },
     ],
-    canLoad: [ AuthGuard ],
-    canActivate: [ AuthGuard ],
+    canLoad: [ AuthGuardExternal ],
+    canActivate: [ AuthGuardExternal ],
   }
 ];
 

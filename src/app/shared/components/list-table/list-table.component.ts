@@ -13,11 +13,11 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./list-table.component.scss']
 })
 export class ListTableComponent implements OnInit{
-  @Input() lists!: List[];
+  @Input() lists!:any;
   @Input() userLists?: User;
-  @Input() addList?: boolean;
-  @Input() editList?: boolean;
-  @Input() deleteList?: boolean;
+  @Input() addList?: boolean = false;
+  @Input() editList?: boolean = false;
+  @Input() deleteList?: boolean = false;
   @Input() crud?: boolean = false;
 
   @Input() author?: boolean = true;
@@ -53,22 +53,15 @@ export class ListTableComponent implements OnInit{
   ) {  }
 
   ngOnInit(){
-    if(this.as.getToken()) {
-      setTimeout(() => {
-        this.getCollection()
-      }, 1000)
-    } else {
+    this.as.getUserSubject().subscribe( userData => {
       this.getCollection()
-    }
+    })
   }
 
   private getCollection() {
-    this.activatedRoute.params.subscribe(({ username }) => {
-      this.crud = (this.userAuth.username === username) && this.crud;
-      this.addList = false || this.crud;
-      this.editList = false || this.crud;
-      this.deleteList = false || this.crud;
-    })
+    this.addList = this.addList || this.crud;
+    this.editList = this.editList || this.crud;
+    this.deleteList = this.deleteList || this.crud;
   }
 
   public openNew() {
@@ -91,7 +84,7 @@ export class ListTableComponent implements OnInit{
         acceptLabel: 'Aceptar',
         rejectLabel: 'Cancelar',
         accept: () => {
-            this.lists = this.lists.filter((val: List) => val.id !== list.id);
+            this.lists = this.lists?.filter((val: List) => val.id !== list.id);
             this.ls.deleteList( list )
             this.messageService.add({severity:'success', summary: 'Eliminado', detail: `Lista ${ list.title } eliminada.`, life: 3000});
         }

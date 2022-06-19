@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/services/content.service';
 
 @Component({
@@ -13,12 +13,20 @@ export class ContentInfoComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private cs: ContentService
+    private cs: ContentService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(({ contentId }) => {
-      this.cs.getMovieOrTvshowsById( this.typeOfContent+"/"+contentId ).subscribe( content => this.content = content)
+      this.cs.getMovieOrTvshowsById( this.typeOfContent+"/"+contentId ).subscribe({
+        next: content => {
+          this.content = content
+        },
+        error: err => {
+          this.router.navigateByUrl('');
+        }
+      })
     });
   }
 

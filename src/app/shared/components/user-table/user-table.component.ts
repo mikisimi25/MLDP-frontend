@@ -19,9 +19,9 @@ export class UserTableComponent implements OnInit{
   constructor(
     private as: AuthService
   ) {
-    this.as.authVerification().subscribe( userAuth => {
-      this.userAuth = userAuth
-    });
+    // this.as.authVerification().subscribe( userAuth => {
+    //   this.userAuth = userAuth
+    // });
   }
 
   ngOnInit(){

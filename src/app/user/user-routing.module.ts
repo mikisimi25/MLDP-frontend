@@ -5,7 +5,7 @@ import { SavedListsComponent } from './pages/saved-lists/saved-lists.component';
 import { FriendsComponent } from './pages/friends/friends.component';
 import { ListsComponent } from './pages/lists/lists.component';
 import { ListComponent } from './pages/list/list.component';
-import { AuthGuard } from '../auth/guards/auth.guard';
+import { AuthGuardInternal } from '../auth/guards/authInternal.guard';
 
 const routes: Routes = [
   {
@@ -21,13 +21,15 @@ const routes: Routes = [
       },
       {
         path: ':username/friends',
-        component: FriendsComponent
+        component: FriendsComponent,
+        canLoad: [ AuthGuardInternal ],
+        canActivate: [ AuthGuardInternal ],
       },
       {
         path: ':username/lists/saved',
         component: SavedListsComponent,
-        canLoad: [ !AuthGuard ],
-        canActivate: [ !AuthGuard ],
+        canLoad: [ AuthGuardInternal ],
+        canActivate: [ AuthGuardInternal ],
       },
       {
         path: ':username/list/:listId',

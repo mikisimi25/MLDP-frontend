@@ -27,9 +27,9 @@
     </ng-template>
     <ng-template pTemplate="body" let-list>
       <tr>
-        <td>{{list.title}}</td>
-        <td>{{list.description}}</td>
-        <td *ngIf="author">{{list.username}}</td>
+        <td>{{list.title | titlecase}}</td>
+        <td>{{list.description | titlecase}}</td>
+        <td *ngIf="author"><span [routerLink]="'/user/'+list.username" class="author">{{list.username | titlecase}}</span></td>
         <td *ngIf="mode">{{((list.public) ? 'público' : 'privado') | titlecase}}</td>
         <td>
           <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2"
@@ -43,7 +43,7 @@
         </td>
       </tr>
     </ng-template>
-    <ng-template pTemplate="summary">
+    <ng-template pTemplate="summary" *ngIf="userLists?.username">
       <div class="flex align-items-center justify-content-between">
         En total tienes {{lists ? lists.length : 0 }} listas.<a *ngIf="!paginator"
           [routerLink]="'/user/'+userLists?.username+'/lists'">Ver todas las listas</a>
@@ -57,7 +57,7 @@
   <ng-template pTemplate="content">
     <div class="field">
       <label for="title">Title</label>
-      <input type="text" pInputText id="title" [(ngModel)]="list.title" required autofocus disabled="(reservedLists.includes(list.user_list_count))" />
+      <input type="text" pInputText id="title" [(ngModel)]="list.title" required autofocus [disabled]="reservedLists.includes(list.user_list_count!)" />
       <small class="p-error" *ngIf="submitted && !list.title">Title is required.</small>
     </div>
     <div class="field">
