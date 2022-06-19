@@ -1,8 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ContentService } from 'src/app/shared/services/content.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ListService } from 'src/app/list/services/list.service';
-import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
   selector: 'app-show-content',
@@ -11,35 +9,28 @@ import { AuthService } from 'src/app/auth/services/auth.service';
 })
 export class ShowContentComponent {
   private _contentCollection: any;
-  public typeOfContent: string = this.activatedRoute.snapshot.data['content'];
-  private _groupedLists: any = [];
+  private _typeOfContent: string = this.activatedRoute.snapshot.data['content'];
 
   public get contentCollection() {
     return this._contentCollection;
   }
 
-  public get groupedLists() {
-    return this._groupedLists;
+  public get typeOfContent(): string {
+    return this._typeOfContent;
   }
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private cs: ContentService,
     private router: Router,
-    private ls: ListService,
-    private as: AuthService
   ) {
-    this.activatedRoute.queryParams.subscribe(({page}) => {
-      this.cs.popularMoviesOrTv( this.typeOfContent,page ).subscribe( content => this._contentCollection = content)
-    })
 
-    if(this.as.getToken()) {
-      setTimeout(() => {
-        this.as.setUserListCollection()
-      }, 1000)
-    } else {
-      this.as.setUserListCollection()
-    }
+    this.activatedRoute.queryParams.subscribe(({page}) => {
+      this.cs.popularMoviesOrTv( this.typeOfContent,page ).subscribe( content => {
+        this._contentCollection = content
+        this._typeOfContent = this.activatedRoute.snapshot.data['content'];
+      })
+    })
   }
 
   public paginate( event:any ) {
@@ -58,19 +49,6 @@ export class ShowContentComponent {
         queryParamsHandling: 'merge'
       }
     );
-  }
-
-  public setUserListCollection() {
-    this.ls.getMovieLists(undefined,this.as.user?.username).subscribe( (lists:any) => {
-
-      this._groupedLists = [
-        {
-          label: 'Mis Listas',
-          value: 'ml',
-          items: lists
-        }
-      ];
-    })
   }
 
   private scrollToTop() {

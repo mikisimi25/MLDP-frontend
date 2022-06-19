@@ -8,6 +8,10 @@ $mediaMinlarge: 1201px;
 :host ::ng-deep {
   .avatar {
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
 
     .p-card-body {
       height: 100%;

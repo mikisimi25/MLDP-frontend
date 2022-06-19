@@ -1,8 +1,16 @@
 <p-toast></p-toast>
 
 <p-card>
-  <ng-template pTemplate="title">
-      {{ ((type === 'movie') ? content.original_title : ((type === 'tv') ? content.original_name : content.username))}}
+  <ng-template pTemplate="title" >
+      <span [routerLink]="'/'+type+'/'+((type !== 'user') ? content.id : content.username)">
+        {{
+          (
+            (type === 'movie') ? content.original_title : (
+              (type === 'tv') ? content.original_name : content.username
+            ) | titlecase
+          )
+        }}
+      </span>
   </ng-template>
 
   <ng-template pTemplate="content">
@@ -26,7 +34,7 @@
 
   <p-overlayPanel #op>
     <ng-template pTemplate>
-        <p-listbox [options]="groupedLists!" [group]="true" [(ngModel)]="selectedLists" [metaKeySelection]="false"
+        <p-listbox [options]="groupedLists" [group]="true" [(ngModel)]="selectedLists" [metaKeySelection]="false"
           [checkbox]="true" [filter]="true" [multiple]="true" [listStyle]="{'max-height':'250px'}"
           [style]="{'width':'15rem'}" optionLabel="title" (onClick)="showSuccess(content.id,selectedLists)" >
 

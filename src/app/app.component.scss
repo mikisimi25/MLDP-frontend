@@ -3,3 +3,8 @@
   overflow: hidden!important;
   background: #f3f3f3;
 }
+:host ::ng-deep {
+  main {
+    min-height:100vh;
+  }
+}

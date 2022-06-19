@@ -1,7 +1,7 @@
 <div class="grid">
   <main class="lg:col-8 lg:col-offset-2 col-12 col-offset-0 grid" style="padding: 1em">
     <div class="card col-12">
-      <component-list-table [lists]="lists" [crud]="true" [author]="false"></component-list-table>
+      <component-list-table [lists]="lists" [crud]="true && permission" [author]="false"></component-list-table>
     </div>
   </main>
 </div>

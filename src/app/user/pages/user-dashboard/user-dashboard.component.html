@@ -1,22 +1,20 @@
 <div class="grid">
-  <main class="lg:col-8 lg:col-offset-2 col-12 col-offset-0 grid" style="padding: 1em">
+  <main class="lg:col-8 lg:col-offset-2 col-12 col-offset-0 grid" style="padding: 1em" *ngIf="!(error | async) && (dashboardUser | async)">
     <p-card class="md:col-5 col-12" styleClass="avatar">
       <ng-template pTemplate="content">
-        <img alt="Card" src="https://cdn.dribbble.com/users/1355613/screenshots/15252730/media/28f348daf9654c440f5dcf398d8e097a.jpg?compress=1&resize=500x500&vertical=top">
+        <img alt="Card" src="https://www.kindpng.com/picc/m/21-214439_free-high-quality-person-icon-default-profile-picture.png">
       </ng-template>
     </p-card>
 
     <p-card class="md:col-7 col-12" styleClass="userinfo">
-      <h1>{{dashboardUser?.username | titlecase}}</h1>
-      <p>{{ dashboardUser?.description }}</p>
+      <h1>{{(dashboardUser | async)?.user?.username | titlecase}}</h1>
+      <p>{{(dashboardUser | async)?.user?.description}}</p>
     </p-card>
 
     <p-card class="col-12">
       <h1>Listas</h1>
 
-      <component-list-table [lists]="userLists" [userLists]="dashboardUser" [rows]="5" [paginator]="false" [author]="false"></component-list-table>
+      <component-list-table [lists]="(dashboardUser | async)?.list" [userLists]="(dashboardUser | async)?.user" [rows]="5" [paginator]="false" [author]="false"></component-list-table>
     </p-card>
-
-
   </main>
 </div>

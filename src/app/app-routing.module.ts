@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ErrorPageComponent } from './shared/pages/error-page/error-page.component';
 
 const routes: Routes = [
   {
@@ -29,12 +30,17 @@ const routes: Routes = [
     loadChildren: () => import('./content/content.module').then( m => m.ContentModule)
   },
   {
-    path: 'test',
-    loadChildren: () => import('./test/test.module').then( m => m.TestModule)
+    path: '',
+    redirectTo: 'movie/all',
+    pathMatch: 'full'
+  },
+  {
+    path: 'not-found',
+    component: ErrorPageComponent
   },
   {
     path: '**',
-    redirectTo: 'movie/all'
+    component: ErrorPageComponent
   }
 ];
 

@@ -20,6 +20,6 @@ import { PrimengModule } from '../shared/primeng/primeng.module';
     ReactiveFormsModule,
     SharedModule,
     PrimengModule
-  ]
+  ],
 })
 export class AuthModule { }
