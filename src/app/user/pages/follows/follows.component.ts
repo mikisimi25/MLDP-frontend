@@ -4,12 +4,12 @@ import { User } from '../../interfaces/user.interface';
 import { CrudUserService } from '../../services/crud-user.service';
 
 @Component({
-  selector: 'app-friends',
-  templateUrl: './friends.component.html',
-  styleUrls: ['./friends.component.scss']
+  selector: 'app-follows',
+  templateUrl: './follows.component.html',
+  styleUrls: ['./follows.component.scss']
 })
-export class FriendsComponent implements OnInit {
-  public friends: User[] = [];
+export class FollowsComponent implements OnInit {
+  public followers: User[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -18,7 +18,7 @@ export class FriendsComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(({ username }) => {
-      this.cs.getUserFriends( username ).subscribe( friends => this.friends = friends)
+      this.cs.getUserFollowers( username ).subscribe( followers => this.followers = followers)
     })
   }
 

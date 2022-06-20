@@ -14,19 +14,29 @@
   </ng-template>
 
   <ng-template pTemplate="content">
-    <img *ngIf="content.poster_path" style="width: 100%;" alt="Card" [src]="(type !== 'user') ? ('https://image.tmdb.org/t/p/w500' + content.poster_path) : 'content.image'"  [routerLink]="'/'+type+'/'+((type !== 'user') ? content.id : content.username)">
+
+    <img style="width: 100%;" alt="Card"
+          [src]="(type !== 'user') ?
+                 (content?.poster_path ?
+                 ('https://image.tmdb.org/t/p/w500' + content.poster_path) :
+                 'https://png.clipart.me/previews/90c/movie-poster-background-vector-material-17011.jpg')
+                 : 'content.image'"
+          [routerLink]="'/'+type+'/'+((type !== 'user') ? content.id : content.username)">
   </ng-template>
 
-  <ng-template pTemplate="footer" style="padding: 0 !important;">
+  <ng-template pTemplate="footer" style="padding: 0 !important;" *ngIf="(isLoggedIn)">
     <div class="grid mt-1" style="text-align: center">
-      <div class="col-12" *ngIf="(isLoggedIn) && ((user?.username !== content.username) && (this.type === 'user'))" style="text-align: right">
-        <button pButton pRipple icon="pi pi-user-plus" class="p-button-rounded" (click)="addFriend(content.id)" pTooltip="Añadir a amigos"></button>
+      <div class="col-12" *ngIf="((user?.username !== content.username) && (this.type === 'user'))" style="text-align: right">
+        <button pButton pRipple icon="pi pi-user-plus" class="p-button-rounded" (click)="addFollower(content.id)" pTooltip="Seguir al usuario"></button>
       </div>
-      <div class="col-6" *ngIf="(isLoggedIn) && (crud && this.type !== 'user')">
+      <div class="col" *ngIf="(crud && this.type !== 'user')">
         <button (click)="addToViewed(type+'/'+content.id)" pButton pRipple type="button" icon="pi pi-eye" class="p-button-rounded p-button-help" pTooltip="Visto"></button>
       </div>
-      <div class="col-6" *ngIf="(isLoggedIn) && (crud && this.type !== 'user')">
+      <div class="col" *ngIf="(crud && this.type !== 'user')">
         <button (click)="op.toggle($event)" pButton pRipple type="button" icon="pi pi-bookmark" class="p-button-rounded p-button-warning" pTooltip="Añadir a una lista"></button>
+      </div>
+      <div class="col" *ngIf="(crud && this.type !== 'user') && deleteButton">
+        <button (click)="deleteContentFromList(content.id)" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger" pTooltip="Quitar de la lista"></button>
       </div>
     </div>
   </ng-template>

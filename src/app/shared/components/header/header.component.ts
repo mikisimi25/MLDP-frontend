@@ -103,8 +103,8 @@ export class HeaderComponent{
                 routerLink: `/user/${userData?.username}`
               },
               {
-                label: 'Amigos',
-                routerLink: `/user/${userData?.username}/friends`
+                label: 'Seguidos',
+                routerLink: `/user/${userData?.username}/follows`
               },
               {
                 label: 'Salir',
