@@ -33,6 +33,8 @@ import {InputSwitchModule} from 'primeng/inputswitch';
 import {TooltipModule} from 'primeng/tooltip';
 import {PaginatorModule} from 'primeng/paginator';
 import {ScrollTopModule} from 'primeng/scrolltop';
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
 
 @NgModule({
   exports: [
@@ -69,7 +71,9 @@ import {ScrollTopModule} from 'primeng/scrolltop';
     InputSwitchModule,
     TooltipModule,
     PaginatorModule,
-    ScrollTopModule
+    ScrollTopModule,
+    MessagesModule,
+    MessageModule
   ],
   providers: [ MessageService, ConfirmationService]
 })

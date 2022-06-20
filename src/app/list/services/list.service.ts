@@ -10,10 +10,24 @@ import { List } from '../interfaces/list.interface';
   providedIn: 'root'
 })
 export class ListService {
-  public _groupedLists = new BehaviorSubject<any>([]);
+  private _groupedLists = new BehaviorSubject<any>([]);
+  private _userData: User | undefined = undefined;
+  public listChanges = new BehaviorSubject<number>(0);
 
   getGroupedListsSubject(){
     return this._groupedLists.asObservable();
+  }
+
+  updateGroupedListsSubject() {
+    this.setUserListCollection(this._userData!)
+  }
+
+  getListChanges(){
+    return this.listChanges.asObservable();
+  }
+
+  public set groupedLists(value:any) {
+    this._groupedLists.next(value);
   }
 
   get token() {
@@ -26,8 +40,8 @@ export class ListService {
   ) {
     this.as.getUserSubject().subscribe( userData => {
       if(userData) {
+        this._userData = userData;
         this.setUserListCollection( userData );
-        console.log("🚀 ~ file: list.service.ts ~ line 30 ~ ListService ~ this.as.getUserSubject ~ setUserListCollection")
       }
     })
   }
@@ -63,6 +77,15 @@ export class ListService {
       })
   }
 
+  public deleteSavedList( list: List ): void {
+    const params = new HttpParams().set('token',this.token.token)
+
+    this.http.delete(`${environment.laravelApiURL}/list/saved-list/${this._userData?.id}/${list.id}`,{params})
+      .subscribe({
+        next: resp => console.log(resp)
+      })
+  }
+
   public addContentToList( listInpor: List , contentId: string ) {
     return this.getMovieLists( undefined, listInpor.username, listInpor.user_list_count )
       .pipe(
@@ -79,17 +102,28 @@ export class ListService {
       )
   }
 
-  public saveList( list: List ) {
-    // this.as.authVerification().subscribe( user => {
-    //   const data = { user: user, list: list }
+  public deleteContentFromList( listId: number, contentId: string ) {
+    return this.getMovieLists( undefined, undefined, undefined, listId )
+      .pipe(
+        switchMap( (list:any) => {
+          let contentCollection:any[] = JSON.parse(list[0].contentId!),
+          indexOfContent = contentCollection?.indexOf( contentId );
 
-    //   this.http.post(`${environment.laravelApiURL}/list/save-list`, data)
-    //     .subscribe({
-    //       next: resp => console.log(resp),
-    //       error: err => console.log(err),
-    //       complete: () => console.log("Lista guardada")
-    //     })
-    // })
+          if(indexOfContent !== -1) {
+            contentCollection.splice(indexOfContent,1);
+
+            return this.http.patch<List>(`${environment.laravelApiURL}/list/${ list[0].id }/addContent`, { contentId: JSON.stringify(contentCollection), ...this.token } )
+          } else {
+            return of(undefined)
+          }
+        })
+      )
+  }
+
+  public saveList( list: List ) {
+    const data = { user: this._userData, list: list, token: this.token.token }
+
+    return this.http.post(`${environment.laravelApiURL}/list/save-list`, data)
   }
 
   public getSavedLists( username: string ): Observable<List[]> {
@@ -107,14 +141,13 @@ export class ListService {
 
   public setUserListCollection( userData: User ) {
     this.getMovieLists(undefined,userData?.username).subscribe( (lists:any) => {
-      this._groupedLists.next([
+      this.groupedLists = [
         {
           label: 'Mis Listas',
           value: 'ml',
           items: lists
         }
-      ])
+      ]
     })
   }
-
 }

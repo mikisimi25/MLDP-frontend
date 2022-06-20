@@ -24,10 +24,10 @@ export class SigninComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.signinForm.reset({
-      identifier: 'bebop23@gmail.com',
-      password: 'password'
-    })
+    // this.signinForm.reset({
+    //   identifier: 'bebop23@gmail.com',
+    //   password: 'password'
+    // })
   }
 
   public invalidField( fieldName: string ): boolean | undefined {

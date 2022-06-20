@@ -16,6 +16,7 @@ export class SmallInfoCardComponent implements OnInit{
   @Input() content?: any;
   @Input() type: string = this.activatedRoute.snapshot.data['content'];
   @Input() crud: boolean = true;
+  @Input() deleteButton: boolean = false;
 
   public groupedLists: any;
   public selectedList: any;
@@ -70,7 +71,7 @@ export class SmallInfoCardComponent implements OnInit{
       this.ls.addContentToList( selectedList, this.type+'/'+movieId.toString())
         .subscribe( data => {
           if(data) {
-            this.ls._groupedLists.next(this.ls._groupedLists.getValue())
+            this.ls.updateGroupedListsSubject()
             this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ list.slice(-1)[0].title})
           } else {
             this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
@@ -85,7 +86,7 @@ export class SmallInfoCardComponent implements OnInit{
         if(list) {
           this.selectedLists.push(list)
           this.selectedLists = [...this.selectedLists];
-          this.ls._groupedLists.next(this.ls._groupedLists.getValue())
+          this.ls.updateGroupedListsSubject()
           this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
         } else {
           this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
@@ -93,8 +94,26 @@ export class SmallInfoCardComponent implements OnInit{
       })
   }
 
-  public addFriend( userId: number ) {
-    this.cruds.addFriend( this.user?.id!, userId );
-    this.messageService.add({severity:'success', summary: 'Solicitud de amistad enviadad'});
+  public addFollower( userId: number ) {
+    this.cruds.addFollow( this.user?.id!, userId )
+      .subscribe({
+        next: resp => {
+          this.messageService.add({severity:'success', summary: 'Ahora sigues a este usuario'});
+        }
+      })
+  }
+
+  public deleteContentFromList( contentId: string ) {
+
+    this.activatedRoute.params.subscribe(({ listId }) => {
+      this.ls.deleteContentFromList( listId, (this.type + '/' + contentId) )
+        .subscribe({
+          next: resp => {
+            this.messageService.add({severity:'success', summary: 'Contenido eliminado'});
+            this.ls.listChanges.next(listId)
+          }
+        })
+    })
+
   }
 }

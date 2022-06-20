@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 
 <div class="card col-12 mb-3">
-  <p-toolbar *ngIf="addList">
+  <p-toolbar *ngIf="buttonAddList">
     <ng-template pTemplate="left">
       <button pButton pRipple label="Nueva lista" icon="pi pi-plus" class="p-button-success mr-2"
         (click)="openNew()"></button>
@@ -18,9 +18,9 @@
         </th>
         <th pSortableColumn="description">Descripción <p-sortIcon field="description"></p-sortIcon>
         </th>
-        <th pSortableColumn="author" *ngIf="author">Autor <p-sortIcon field="author"></p-sortIcon>
+        <th pSortableColumn="author" *ngIf="authorColumn">Autor <p-sortIcon field="author"></p-sortIcon>
         </th>
-        <th pSortableColumn="public" *ngIf="mode">Modo <p-sortIcon field="public"></p-sortIcon>
+        <th pSortableColumn="public" *ngIf="modeColumn">Modo <p-sortIcon field="public"></p-sortIcon>
         </th>
         <th></th>
       </tr>
@@ -29,17 +29,19 @@
       <tr>
         <td>{{list.title | titlecase}}</td>
         <td>{{list.description | titlecase}}</td>
-        <td *ngIf="author"><span [routerLink]="'/user/'+list.username" class="author">{{list.username | titlecase}}</span></td>
-        <td *ngIf="mode">{{((list.public) ? 'público' : 'privado') | titlecase}}</td>
+        <td *ngIf="authorColumn"><span [routerLink]="'/user/'+list.username" class="author">{{list.username | titlecase}}</span></td>
+        <td *ngIf="modeColumn">{{((list.public) ? 'público' : 'privado') | titlecase}}</td>
         <td>
           <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2"
             [routerLink]="'/user/'+list.username+'/list/'+list.id"></button>
-          <button *ngIf="isLoggedIn && (list.username !== userAuth?.username)" pButton pRipple icon="pi pi-heart" class="p-button-rounded p-button-warning mr-2"
+          <button *ngIf="isLoggedIn && (list.username !== userAuth?.username) && !buttonDeleteSavedList" pButton pRipple icon="pi pi-heart" class="p-button-rounded p-button-warning mr-2"
             (click)="saveList(list)"></button>
-          <button *ngIf="editList" pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+          <button *ngIf="buttonEditList" pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
             (click)="updateList(list)"></button>
-          <button *ngIf="deleteList && (!reservedLists.includes(list.user_list_count))" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+          <button *ngIf="buttonDeleteList && (!reservedLists.includes(list.user_list_count))" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
             (click)="destroyList(list)"></button>
+          <button *ngIf="buttonDeleteSavedList" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+          (click)="deleteSavedList(list)"></button>
         </td>
       </tr>
     </ng-template>

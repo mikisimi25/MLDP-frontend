@@ -1,8 +1,7 @@
 <div class="card col-12 mb-3">
-
   <p-table #dt [value]="users" [rows]="rows" [paginator]="paginator"
     [globalFilterFields]="['username']" responsiveLayout="scroll" [rowHover]="true"
-    dataKey="id" currentPageReportTemplate="Mostrando desde el amigo {first} al {last} de {totalRecords} amigos."
+    dataKey="id" currentPageReportTemplate="Mostrando desde el usuario {first} al {last} de {totalRecords} usuarios que sigues."
     [showCurrentPageReport]="true">
     <ng-template pTemplate="header">
       <tr>
@@ -14,14 +13,14 @@
       <tr>
         <td>{{user.username | titlecase}}</td>
         <td>
-          <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2"
-            [routerLink]="'/user/'+user.username"></button>
+          <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2" [routerLink]="'/user/'+user.username" pTooltip="Ver usuario"></button>
+          <button pButton pRipple icon="pi pi-user-minus" class="p-button-rounded p-button-danger" (click)="cancelSuscrption(user.id)" pTooltip="Dejar de seguir"></button>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="summary">
       <div class="flex align-items-center justify-content-between">
-        En total tienes {{users ? users.length : 0 }} listas.
+        En total sigues a {{users ? users.length : 0 }} usuarios.
       </div>
     </ng-template>
   </p-table>

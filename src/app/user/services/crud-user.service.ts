@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, switchMap } from 'rxjs';
+import { AuthService } from 'src/app/auth/services/auth.service';
 import { environment } from 'src/environments/environment';
 import { User } from '../interfaces/user.interface';
 
@@ -15,7 +16,8 @@ export class CrudUserService {
   }
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private as: AuthService
   ) {
 
   }
@@ -40,23 +42,25 @@ export class CrudUserService {
       })
   }
 
-  public getUserByStorage() {
-    return this.getUser( parseInt(localStorage.getItem('token')!) )
-  }
+  public getUserFollowers( username: string ) {
+    const params = new HttpParams().set('token',JSON.parse(localStorage.getItem('token')!))
 
-  public getUserFriends( username: string ) {
     return this.getUser( undefined, username ).pipe(
-      switchMap( user => this.http.get<User[]>(`${environment.laravelApiURL}/user/${user[0]?.id}/friends`))
+      switchMap( user => this.http.get<User[]>(`${environment.laravelApiURL}/user/${user[0]?.id}/followers`,{params}))
     )
   }
 
-  public addFriend( requestedId: number, recieverId: number ) {
-    this.http.post(`${environment.laravelApiURL}/user/friend-request`,{ user_requested_id:requestedId, user_reciever_id: recieverId })
-      .subscribe({
-        next: resp => console.log(resp),
-        error: err => console.log(err),
-        complete: () => console.log("Solicitud de amistad enviada")
-      })
+  public addFollow( requestedId: number, recieverId: number ) {
+    return this.http.post(`${environment.laravelApiURL}/user/follow-request`,{ user_requested_id:requestedId, user_reciever_id: recieverId, token: JSON.parse(localStorage.getItem('token')!) })
+  }
+
+  public cancelFollow( recieverId: number ) {
+    const params = new HttpParams()
+      .set('token',JSON.parse(localStorage.getItem('token')!))
+      .set('user_requested_id',this.as.user?.id!)
+      .set('user_reciever_id',recieverId)
+
+    return this.http.delete(`${environment.laravelApiURL}/user/follow-request`,{params})
   }
 
 }

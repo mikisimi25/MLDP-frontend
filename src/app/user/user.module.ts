@@ -10,7 +10,7 @@ import { UserDashboardComponent } from './pages/user-dashboard/user-dashboard.co
 import { ListsComponent } from './pages/lists/lists.component';
 import { ListComponent } from './pages/list/list.component';
 import { SavedListsComponent } from './pages/saved-lists/saved-lists.component';
-import { FriendsComponent } from './pages/friends/friends.component';
+import { FollowsComponent } from './pages/follows/follows.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,7 @@ import { FriendsComponent } from './pages/friends/friends.component';
     ListsComponent,
     ListComponent,
     SavedListsComponent,
-    FriendsComponent
+    FollowsComponent
   ],
   imports: [
     CommonModule,
