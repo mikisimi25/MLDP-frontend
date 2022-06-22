@@ -2,13 +2,17 @@
   <main class="lg:col-8 lg:col-offset-2 col-12 col-offset-0 grid" style="padding: 1em" *ngIf="!(error | async) && (dashboardUser | async)">
     <p-card class="md:col-5 col-12" styleClass="avatar">
       <ng-template pTemplate="content">
-        <img alt="Card" src="https://www.kindpng.com/picc/m/21-214439_free-high-quality-person-icon-default-profile-picture.png">
+        <p-image src="https://www.kindpng.com/picc/m/21-214439_free-high-quality-person-icon-default-profile-picture.png" alt="Image" width="100%"></p-image>
       </ng-template>
     </p-card>
 
-    <p-card class="md:col-7 col-12" styleClass="userinfo">
-      <h1>{{(dashboardUser | async)?.user?.username | titlecase}}</h1>
-      <p>{{(dashboardUser | async)?.user?.description}}</p>
+    <p-card class="md:col-7 col-12" styleClass="userinfo" >
+      <form action="" [formGroup]="profileForm">
+        <h1>{{(dashboardUser | async)?.user?.username | titlecase}}</h1>
+        <p *ngIf="!ownProfile">{{(dashboardUser | async)?.user?.description}}</p>
+        <textarea *ngIf="ownProfile" rows="5" cols="30" pInputTextarea [autoResize]="true" formControlName="description">{{(dashboardUser | async)?.user?.description}}</textarea>
+        <button *ngIf="ownProfile" (click)="changeDataUser()" pButton pRipple type="button" label="Cambiar descripción" class="p-button-rounded"></button>
+      </form>
     </p-card>
 
     <p-card class="col-12">

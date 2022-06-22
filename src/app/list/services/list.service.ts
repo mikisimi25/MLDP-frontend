@@ -57,15 +57,10 @@ export class ListService {
     return this.http.get<List[]>(`${environment.laravelApiURL}/list`+params)
   }
 
-  public createList( newList: List ): void {
+  public createList( newList: List ) {
     const params = {...this.token, ...newList};
 
-    this.http.post<List>(`${environment.laravelApiURL}/list`, params)
-      .subscribe({
-        next: resp => console.log(resp),
-        error: err => console.log(err),
-        complete: () => console.log("Lista creada")
-      })
+    return this.http.post<List>(`${environment.laravelApiURL}/list`, params)
   }
 
   public deleteList( list: List ): void {
@@ -73,7 +68,10 @@ export class ListService {
 
     this.http.delete(`${environment.laravelApiURL}/list/${ list.id }`,{params})
       .subscribe({
-        next: resp => console.log(resp)
+        next: resp => {
+          this.updateGroupedListsSubject()
+          console.log(resp)
+        }
       })
   }
 

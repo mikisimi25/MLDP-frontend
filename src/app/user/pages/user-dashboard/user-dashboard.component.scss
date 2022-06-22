@@ -21,7 +21,7 @@ $mediaMinlarge: 1201px;
         height: 100%;
         padding: 0;
 
-        img {
+        .p-image {
           width: 100%;
         }
       }
@@ -31,4 +31,9 @@ $mediaMinlarge: 1201px;
       height: 350px;
     }
   }
+
+  textarea {
+    width: 100%;
+  }
+
 }

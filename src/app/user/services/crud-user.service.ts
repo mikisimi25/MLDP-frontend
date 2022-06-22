@@ -63,4 +63,8 @@ export class CrudUserService {
     return this.http.delete(`${environment.laravelApiURL}/user/follow-request`,{params})
   }
 
+  public changeDataUser( userData: User) {
+    return this.http.patch(`${environment.laravelApiURL}/user/${userData.id}`,{description: userData.description,token: JSON.parse(localStorage.getItem('token')!)})
+  }
+
 }

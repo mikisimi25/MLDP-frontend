@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/services/auth.service';
@@ -6,7 +7,8 @@ import { User } from 'src/app/user/interfaces/user.interface';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  providers: [TitleCasePipe]
 })
 export class HeaderComponent{
   private _items: any = [];
@@ -26,7 +28,8 @@ export class HeaderComponent{
 
   constructor(
     private as: AuthService,
-    private router: Router
+    private router: Router,
+    public titleCasePipe: TitleCasePipe
   ) {  }
 
   ngOnInit() {
@@ -95,7 +98,7 @@ export class HeaderComponent{
           ]
       },
       {
-          label:'Usuario',
+          label:this.titleCasePipe.transform(userData?.username),
           icon:'pi pi-fw pi-user',
           items: [
               {

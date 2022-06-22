@@ -122,17 +122,27 @@ export class ListTableComponent implements OnInit{
             this.lists[this.findIndexById(this.list.id)] = this.list;
             this.ls.updateList( this.list )
             this.messageService.add({severity:'success', summary: 'Actualizada', detail: 'Lista actualizada', life: 3000});
+            this.showChanges()
         } else {
           this.list.username = this.as.user!.username;
-          this.ls.createList( this.list );
-          this.lists.push( this.list );
-          this.messageService.add({severity:'success', summary: 'Creado', detail: `Lista ${ this.list.title } creada.`, life: 3000});
+          this.ls.createList( this.list ).subscribe({
+            next: resp => {
+              this.list.id = resp.id;
+              this.lists.push( this.list );
+              this.messageService.add({severity:'success', summary: 'Creado', detail: `Lista ${ this.list.title } creada.`, life: 3000});
+              this.showChanges()
+            },
+            error: err => console.log(err),
+            complete: () => console.log("Lista creada")
+          })
         }
-
-        this.lists = [...this.lists];
-        this.listDialog = false;
-        this.list = <List>{};
     }
+  }
+
+  public showChanges() {
+    this.lists = [...this.lists];
+    this.listDialog = false;
+    this.list = <List>{};
   }
 
   public saveList( list: List ) {
