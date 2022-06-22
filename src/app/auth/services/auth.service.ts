@@ -12,14 +12,18 @@ export class AuthService {
   private _user: User | undefined;
   private _isLogged: boolean = false;
   private _userSubject = new BehaviorSubject<User | undefined>(undefined);
+  private _isLoggedSubject = new BehaviorSubject<boolean>(false);
 
   getUserSubject(){
-    console.log("🚀 ~ file: auth.service.ts ~ line 20 ~ AuthService ~ getUserSubject ~ this._userSubject", this._user)
     return this._userSubject.asObservable();
   }
 
   public get user() {
     return {...this._user};
+  }
+
+  isLoggedInSubject(){
+    return this._isLoggedSubject.asObservable();
   }
 
   public get isLoggedIn() {
@@ -59,6 +63,7 @@ export class AuthService {
         next: data => {
           this._user = {...data.user};
           this._isLogged = true;
+          this._isLoggedSubject.next(true)
           this._userSubject.next(this._user)
         },
         error: err => console.error(err)
@@ -67,6 +72,7 @@ export class AuthService {
 
   public logout(): void {
     this._isLogged = false;
+    this._isLoggedSubject.next(false)
     this._user = undefined;
     this._userSubject.next(undefined)
     localStorage.removeItem( 'token' )

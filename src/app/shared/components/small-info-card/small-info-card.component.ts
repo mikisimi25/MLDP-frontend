@@ -42,6 +42,7 @@ export class SmallInfoCardComponent implements OnInit{
 
   ngOnInit() {
     this.ls.getGroupedListsSubject().subscribe( group => {
+      console.log("🚀 ~ file: small-info-card.component.ts ~ line 45 ~ SmallInfoCardComponent ~ this.ls.getGroupedListsSubject ~ group", group)
       this.groupedLists = group;
       (group.length > 0) && this.uploadChecks( this.groupedLists )
     })

@@ -14,18 +14,18 @@
   </ng-template>
 
   <ng-template pTemplate="content">
-
-    <img style="width: 100%;" alt="Card"
-          [src]="(type !== 'user') ?
-                 (content?.poster_path ?
-                 ('https://image.tmdb.org/t/p/w500' + content.poster_path) :
-                 'https://png.clipart.me/previews/90c/movie-poster-background-vector-material-17011.jpg')
-                 : 'content.image'"
-          [routerLink]="'/'+type+'/'+((type !== 'user') ? content.id : content.username)">
+    <div class="imageContainer" *ngIf="type !== 'user'">
+      <img style="width: 100%;" alt="Card"
+            [src]="(content?.poster_path ?
+                   ('https://image.tmdb.org/t/p/w500' + content.poster_path) :
+                   'https://png.clipart.me/previews/90c/movie-poster-background-vector-material-17011.jpg')"
+            [routerLink]="'/'+type+'/'+((type !== 'user') ? content.id : content.username)"
+             >
+    </div>
   </ng-template>
 
-  <ng-template pTemplate="footer" style="padding: 0 !important;" *ngIf="(isLoggedIn)">
-    <div class="grid mt-1" style="text-align: center">
+  <ng-template pTemplate="footer" style="padding: 0 !important;">
+    <div class="grid mt-1" style="text-align: center" *ngIf="isLoggedIn">
       <div class="col-12" *ngIf="((user?.username !== content.username) && (this.type === 'user'))" style="text-align: right">
         <button pButton pRipple icon="pi pi-user-plus" class="p-button-rounded" (click)="addFollower(content.id)" pTooltip="Seguir al usuario"></button>
       </div>

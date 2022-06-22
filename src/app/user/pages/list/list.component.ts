@@ -47,7 +47,8 @@ export class ListComponent implements OnInit {
 
   private getCollection() {
     this.contentCpllection = []
-      this.ls.getMovieLists( undefined,this._list.username, this._list.id ).subscribe( list => {
+      this.ls.getMovieLists( undefined,this._list.username,undefined, this._list.id ).subscribe( list => {
+
         JSON.parse(list[0].contentId!).forEach( (contentId:string) => {
           if(list[0].public == true || this.authorColumn) {
             let type: string = (contentId.includes('tv')) ? 'tv' : 'movie';

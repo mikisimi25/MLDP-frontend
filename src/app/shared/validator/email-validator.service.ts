@@ -19,7 +19,11 @@ export class EmailValidatorService implements AsyncValidator {
       .pipe(
         delay(500),
         map(
-          resp => (resp.length !== 0) ? { emailExists: true } : null
+          resp => {
+          console.log("🚀 ~ file: email-validator.service.ts ~ line 23 ~ EmailValidatorService ~ validate ~ resp", resp)
+
+            return null
+          }
         )
       )
 

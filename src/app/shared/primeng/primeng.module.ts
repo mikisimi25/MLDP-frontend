@@ -35,6 +35,7 @@ import {PaginatorModule} from 'primeng/paginator';
 import {ScrollTopModule} from 'primeng/scrolltop';
 import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
+import {InplaceModule} from 'primeng/inplace';
 
 @NgModule({
   exports: [
@@ -73,7 +74,8 @@ import {MessageModule} from 'primeng/message';
     PaginatorModule,
     ScrollTopModule,
     MessagesModule,
-    MessageModule
+    MessageModule,
+    InplaceModule
   ],
   providers: [ MessageService, ConfirmationService]
 })

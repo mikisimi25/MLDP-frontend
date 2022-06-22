@@ -15,6 +15,10 @@ export class ShowlistsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.ls.getListChanges().subscribe( lists => {
+    console.log("🚀 ~ file: showlists.component.ts ~ line 19 ~ ShowlistsComponent ~ this.ls.getListChanges ~ lists", lists)
+
+    })
     this.ls.getMovieLists(true).subscribe( lists => this.lists = lists)
   }
 }

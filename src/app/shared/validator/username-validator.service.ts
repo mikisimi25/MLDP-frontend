@@ -20,6 +20,7 @@ export class UsernameValidatorService implements AsyncValidator{
       .pipe(
         delay(500),
         map( resp => {
+          console.log("🚀 ~ file: email-validator.service.ts ~ line 23 ~ EmailValidatorService ~ validate ~ resp", resp)
           return (resp.length !== 0) ? { userExists: true } : null
         })
       )
