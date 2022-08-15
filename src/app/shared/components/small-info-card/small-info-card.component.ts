@@ -1,10 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
-import { AuthService } from 'src/app/auth/services/auth.service';
+import { AppState } from 'src/app/app.reducer';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { ListService } from 'src/app/list/services/list.service';
+import { User } from 'src/app/user/interfaces/user.interface';
 import { CrudUserService } from 'src/app/user/services/crud-user.service';
+import * as listActions from 'src/app/list/redux/list.actions';
+import * as userActions from 'src/app/user/redux/user.actions';
 
 @Component({
   selector: 'component-small-info-card',
@@ -22,30 +26,29 @@ export class SmallInfoCardComponent implements OnInit{
   public selectedList: any;
   public selectedLists: any = [];
   public sliceOption!: number;
-
-  public get user() {
-    return this.as.user;
-  }
-
-  public get isLoggedIn() {
-    return this.as.isLoggedIn;
-  }
+  public isLoggedIn: boolean = false;
+  public user: User | undefined = undefined;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private ls: ListService,
     private messageService: MessageService,
     private cruds: CrudUserService,
-    private as: AuthService,
-  ) {
-  }
+    private store: Store<AppState>
+  ) { }
 
   ngOnInit() {
+
+    this.store.select('auth').subscribe( ({ user,isLoggedIn }) => {
+      this.isLoggedIn = isLoggedIn;
+      this.user = user;
+    })
+
     this.ls.getGroupedListsSubject().subscribe( group => {
-      console.log("🚀 ~ file: small-info-card.component.ts ~ line 45 ~ SmallInfoCardComponent ~ this.ls.getGroupedListsSubject ~ group", group)
       this.groupedLists = group;
       (group.length > 0) && this.uploadChecks( this.groupedLists )
     })
+
   }
 
   uploadChecks( prueba: any ) {
@@ -69,39 +72,42 @@ export class SmallInfoCardComponent implements OnInit{
     if( list.length > 0) {
       const selectedList: List = list.slice(-1)[0] || 0;
 
-      this.ls.addContentToList( selectedList, this.type+'/'+movieId.toString())
-        .subscribe( data => {
-          if(data) {
-            this.ls.updateGroupedListsSubject()
-            this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ list.slice(-1)[0].title})
-          } else {
-            this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
-          }
-        })
+      // this.ls.addContentToList( selectedList, this.type+'/'+movieId.toString())
+      //   .subscribe( data => {
+      //     if(data) {
+      //       this.ls.updateGroupedListsSubject()
+      //       this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ list.slice(-1)[0].title})
+      //     } else {
+      //       this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
+      //     }
+      //   })
+
+      this.store.dispatch( listActions.addContentToList({ list: selectedList, content: this.type+'/'+movieId.toString() }) );
+
+      this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ list.slice(-1)[0].title})
     }
   }
 
   public addToViewed( movieId: string ) {
-    this.ls.addContentToList( <List>{username: this.user?.username, user_list_count: 2}, movieId )
-      .subscribe( list => {
-        if(list) {
-          this.selectedLists.push(list)
-          this.selectedLists = [...this.selectedLists];
-          this.ls.updateGroupedListsSubject()
-          this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
-        } else {
-          this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
-        }
-      })
+    // this.ls.addContentToList( <List>{username: this.user?.username, user_list_count: 2}, movieId )
+    //   .subscribe( list => {
+    //     if(list) {
+    //       this.selectedLists.push(list)
+    //       this.selectedLists = [...this.selectedLists];
+    //       this.ls.updateGroupedListsSubject()
+    //       this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
+    //     } else {
+    //       this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
+    //     }
+    //   })
+
+    this.store.dispatch( listActions.addContentToList({ list: <List>{username: this.user?.username, user_list_count: 2}, content: this.type+'/'+movieId.toString() }) );
+
+    this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
   }
 
   public addFollower( userId: number ) {
-    this.cruds.addFollow( this.user?.id!, userId )
-      .subscribe({
-        next: resp => {
-          this.messageService.add({severity:'success', summary: 'Ahora sigues a este usuario'});
-        }
-      })
+    this.store.dispatch( userActions.follow({ userId: this.user?.id!, followId: userId }) )
   }
 
   public deleteContentFromList( contentId: string ) {

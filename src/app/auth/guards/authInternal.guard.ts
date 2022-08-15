@@ -1,37 +1,54 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
-import { AuthService } from 'src/app/auth/services/auth.service';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
+import { AppState } from 'src/app/app.reducer';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuardInternal implements CanActivate, CanLoad {
+export class AuthGuardInternal implements OnInit, OnDestroy, CanActivate, CanLoad {
+  private _isLoggedIn: boolean = false;
+  private subs!: Subscription;
 
   constructor(
-    private as: AuthService,
-    private router: Router
+    private router: Router,
+    public store: Store<AppState>
   ) { }
 
+  ngOnInit() {
+
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-      if( this.as.isLoggedIn ) {
+      this.subs = this.store.select('auth').subscribe( ({ isLoggedIn }) => {
+        this._isLoggedIn = isLoggedIn
+      })
+
+      if( this._isLoggedIn ) {
         return true;
       } else {
         this.router.navigateByUrl('');
         return false
       }
-    return this.as.isLoggedIn;
   }
 
   canLoad(
     route: Route,
     segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-      if( this.as.isLoggedIn ) {
+      this.subs = this.store.select('auth').subscribe( ({ isLoggedIn }) => {
+        this._isLoggedIn = isLoggedIn
+      })
+
+      if( this._isLoggedIn ) {
         return true;
       } else {
         this.router.navigateByUrl('');

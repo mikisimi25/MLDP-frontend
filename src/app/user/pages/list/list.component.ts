@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { debounce, debounceTime } from 'rxjs';
+import { AppState } from 'src/app/app.reducer';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { ContentService } from 'src/app/shared/services/content.service';
@@ -21,7 +23,8 @@ export class ListComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private ls: ListService,
     private cs: ContentService,
-    private as: AuthService
+    private as: AuthService,
+    private store: Store<AppState>
   ) { }
 
   ngOnInit(): void {
@@ -30,11 +33,11 @@ export class ListComponent implements OnInit {
       this._list = <List>{ id: listId, username: username};
     })
 
-    this.as.getUserSubject()
+    this.store.select('auth')
       .pipe(
         debounceTime(500)
-      ).subscribe( userData => {
-        this.authorColumn = userData?.username === this._list.username;
+      ).subscribe( ({ user }) => {
+        this.authorColumn = user?.username === this._list.username;
         this.getCollection()
       })
 

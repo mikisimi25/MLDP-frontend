@@ -17,8 +17,8 @@ const routes: Routes = [
         component: SigninComponent
       },
     ],
-    canLoad: [ AuthGuardExternal ],
-    canActivate: [ AuthGuardExternal ],
+    // canLoad: [ AuthGuardExternal ],
+    // canActivate: [ AuthGuardExternal ],
   }
 ];
 
