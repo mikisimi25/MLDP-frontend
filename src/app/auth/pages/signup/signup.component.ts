@@ -49,7 +49,7 @@ export class SignupComponent {
 
       this.as.register( userData ).subscribe({
         next: ({token}) => {
-          this.as.setSession( token )
+          // this.as.setSession( token )
           this.router.navigate([`./movie/all`])
         }
       })

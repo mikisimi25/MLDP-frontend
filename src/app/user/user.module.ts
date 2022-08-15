@@ -28,7 +28,7 @@ import { FollowsComponent } from './pages/follows/follows.component';
     FormsModule,
 
     PrimengModule,
-    CardModule
+    CardModule,
   ]
 })
 export class UserModule { }
