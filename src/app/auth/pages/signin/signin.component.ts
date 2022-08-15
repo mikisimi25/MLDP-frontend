@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
 import { ValidationsService } from 'src/app/shared/validator/validations.service';
+import { login } from 'src/app/auth/redux/auth.actions';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -9,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss']
 })
-export class SigninComponent implements OnInit {
+export class SigninComponent {
 
   public signinForm: FormGroup = this.fb.group({
     identifier: ['', [ Validators.required, Validators.minLength(3) ] ],
@@ -20,15 +23,8 @@ export class SigninComponent implements OnInit {
     private fb: FormBuilder,
     private validations: ValidationsService,
     private router: Router,
-    private as: AuthService
+    private store: Store<AppState>
   ) { }
-
-  ngOnInit(): void {
-    // this.signinForm.reset({
-    //   identifier: 'bebop23@gmail.com',
-    //   password: 'password'
-    // })
-  }
 
   public invalidField( fieldName: string ): boolean | undefined {
     return this.validations.invalidField( fieldName, this.signinForm );
@@ -43,14 +39,8 @@ export class SigninComponent implements OnInit {
       const identifier = this.signinForm.get('identifier')?.value;
       const password = this.signinForm.get('password')?.value;
 
-      this.as.login( identifier, password )
-        .subscribe({
-          next: ({token}) => {
-            this.as.setSession( token )
-            this.router.navigate([`./movie/all`])
-          },
-          error: err => this.signinForm.setErrors( { accessFail: true} )
-        })
+      this.store.dispatch( login({ email: identifier, password }) )
+      this.router.navigate([`./movie/all`])
 
     } else {
       this.signinForm.markAllAsTouched();

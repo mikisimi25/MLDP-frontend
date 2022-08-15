@@ -42,7 +42,7 @@ export class CrudUserService {
       })
   }
 
-  public getUserFollowers( username: string ) {
+  public getUserFollowers( username: string ): Observable<User[]> {
     const params = new HttpParams().set('token',JSON.parse(localStorage.getItem('token')!))
 
     return this.getUser( undefined, username ).pipe(

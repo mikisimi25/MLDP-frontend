@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ListService } from '../../services/list.service';
 import { List } from '../../interfaces/list.interface';
+import { AppState } from 'src/app/app.reducer';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-showlists',
@@ -11,14 +12,10 @@ export class ShowlistsComponent implements OnInit {
   public lists: List[] = [];
 
   constructor(
-    private ls: ListService
+    private store: Store<AppState>
   ) { }
 
   ngOnInit(): void {
-    this.ls.getListChanges().subscribe( lists => {
-    console.log("🚀 ~ file: showlists.component.ts ~ line 19 ~ ShowlistsComponent ~ this.ls.getListChanges ~ lists", lists)
-
-    })
-    this.ls.getMovieLists(true).subscribe( lists => this.lists = lists)
+    this.store.select('list').subscribe(({ lists }) => this.lists = lists)
   }
 }
