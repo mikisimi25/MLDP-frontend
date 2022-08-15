@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, switchMap,pipe, BehaviorSubject } from 'rxjs';
-import { AuthService } from 'src/app/auth/services/auth.service';
+import { Store } from '@ngrx/store';
+import { Observable, of, switchMap, BehaviorSubject } from 'rxjs';
+import { AppState } from 'src/app/app.reducer';
 import { User } from 'src/app/user/interfaces/user.interface';
 import { environment } from 'src/environments/environment';
 import { List } from '../interfaces/list.interface';
@@ -36,12 +37,12 @@ export class ListService {
 
   constructor(
     private http: HttpClient,
-    private as: AuthService
+    private store: Store<AppState>
   ) {
-    this.as.getUserSubject().subscribe( userData => {
-      if(userData) {
-        this._userData = userData;
-        this.setUserListCollection( userData );
+    this.store.select('auth').subscribe( ({ user }) => {
+      if(user) {
+        this._userData = user;
+        this.setUserListCollection( user );
       }
     })
   }
@@ -58,21 +59,15 @@ export class ListService {
   }
 
   public createList( newList: List ) {
-    const params = {...this.token, ...newList};
+    const params = { ...this.token, ...newList };
 
     return this.http.post<List>(`${environment.laravelApiURL}/list`, params)
   }
 
-  public deleteList( list: List ): void {
+  public deleteList( list: List ): Observable<null> {
     const params = new HttpParams().set('token',this.token.token)
 
-    this.http.delete(`${environment.laravelApiURL}/list/${ list.id }`,{params})
-      .subscribe({
-        next: resp => {
-          this.updateGroupedListsSubject()
-          console.log(resp)
-        }
-      })
+    return this.http.delete<null>(`${environment.laravelApiURL}/list/${ list.id }`,{params})
   }
 
   public deleteSavedList( list: List ): void {
@@ -130,11 +125,8 @@ export class ListService {
     return this.http.get<List[]>(`${environment.laravelApiURL}/list/savedLists/${username}`,{params})
   }
 
-  public updateList( changedList: List ) {
-    this.http.put(`${environment.laravelApiURL}/list/${ changedList.id }`, {...changedList, ...this.token})
-      .subscribe({
-        next: resp => console.log('Update list',resp)
-      })
+  public updateList( changedList: List ): Observable<List> {
+    return this.http.put<List>(`${environment.laravelApiURL}/list/${ changedList.id }`, {...changedList, ...this.token})
   }
 
   public setUserListCollection( userData: User ) {

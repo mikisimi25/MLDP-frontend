@@ -1,8 +1,14 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
+import { guestAccess, login } from 'src/app/auth/redux/auth.actions';
+
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { User } from 'src/app/user/interfaces/user.interface';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -17,9 +23,7 @@ export class HeaderComponent{
     return this._items;
   }
 
-  public get isLoggedIn() {
-    return this.as.isLoggedIn;
-  }
+  public isLoggedIn: boolean = false;
 
   //Search
   public searchQuery: string = '';
@@ -29,14 +33,18 @@ export class HeaderComponent{
   constructor(
     private as: AuthService,
     private router: Router,
-    public titleCasePipe: TitleCasePipe
+    public titleCasePipe: TitleCasePipe,
+    private store: Store<AppState>
   ) {  }
 
   ngOnInit() {
 
-    this.as.getUserSubject().subscribe( userData => {
-      this.setMenuItems( userData! );
+    this.store.select('auth').subscribe( ({user,isLoggedIn}) => {
+      this.setMenuItems( user! )
+
+      this.isLoggedIn = isLoggedIn;
     })
+
 
     this.options = [
       {value: 'Películas', route: "movie"},
@@ -53,6 +61,10 @@ export class HeaderComponent{
       this.searchQuery = '';
       this.optionField = this.options[0];
     }
+  }
+
+  public guestLogin() {
+    this.store.dispatch( guestAccess() )
   }
 
   setMenuItems( userData: User ) {
@@ -88,12 +100,12 @@ export class HeaderComponent{
             {
               label: 'Mis listas',
               routerLink: `/user/${userData?.username}/lists`,
-              visible: this.isLoggedIn
+              visible: userData !== undefined
             },
             {
               label: 'Listas guardadas',
               routerLink: `/user/${userData?.username}/lists/saved`,
-              visible: this.isLoggedIn
+              visible: userData !== undefined
             },
           ]
       },
@@ -114,7 +126,7 @@ export class HeaderComponent{
                 command: () => this.as.logout()
               }
           ],
-          visible: this.isLoggedIn
+          visible: userData !== undefined
       }
     ];
   }

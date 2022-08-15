@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { ListService } from 'src/app/list/services/list.service';
@@ -26,11 +28,12 @@ export class ListsComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private ls: ListService,
     private as: AuthService,
+    private store: Store<AppState>
   ) {  }
 
   ngOnInit(): void {
-    this.as.getUserSubject().subscribe( userData => {
-      this.getCollection( userData! )
+    this.store.select('auth').subscribe( ({ user }) => {
+      this.getCollection( user! )
     })
   }
 
