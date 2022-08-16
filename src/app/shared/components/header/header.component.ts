@@ -49,7 +49,7 @@ export class HeaderComponent{
     this.options = [
       {value: 'Películas', route: "movie"},
       {value: 'Series', route: "tv"},
-      {value: 'Usuarios', route: "user"}
+      // {value: 'Usuarios', route: "user"}
     ];
 
     this.optionField = this.options[0];
@@ -89,45 +89,45 @@ export class HeaderComponent{
             }
           ]
       },
-      {
-          label:'Listas',
-          icon:'pi pi-fw pi-list',
-          items: [
-            {
-              label: 'Populares',
-              routerLink: `/list/all`
-            },
-            {
-              label: 'Mis listas',
-              routerLink: `/user/${userData?.username}/lists`,
-              visible: userData !== undefined
-            },
-            {
-              label: 'Listas guardadas',
-              routerLink: `/user/${userData?.username}/lists/saved`,
-              visible: userData !== undefined
-            },
-          ]
-      },
-      {
-          label:this.titleCasePipe.transform(userData?.username),
-          icon:'pi pi-fw pi-user',
-          items: [
-              {
-                label: 'Perfil',
-                routerLink: `/user/${userData?.username}`
-              },
-              {
-                label: 'Seguidos',
-                routerLink: `/user/${userData?.username}/follows`
-              },
-              {
-                label: 'Salir',
-                command: () => this.as.logout()
-              }
-          ],
-          visible: userData !== undefined
-      }
+      // {
+      //     label:'Listas',
+      //     icon:'pi pi-fw pi-list',
+      //     items: [
+      //       {
+      //         label: 'Populares',
+      //         routerLink: `/list/all`
+      //       },
+      //       {
+      //         label: 'Mis listas',
+      //         routerLink: `/user/${userData?.username}/lists`,
+      //         visible: userData !== undefined
+      //       },
+      //       {
+      //         label: 'Listas guardadas',
+      //         routerLink: `/user/${userData?.username}/lists/saved`,
+      //         visible: userData !== undefined
+      //       },
+      //     ]
+      // },
+      // {
+      //     label:this.titleCasePipe.transform(userData?.username),
+      //     icon:'pi pi-fw pi-user',
+      //     items: [
+      //         {
+      //           label: 'Perfil',
+      //           routerLink: `/user/${userData?.username}`
+      //         },
+      //         {
+      //           label: 'Seguidos',
+      //           routerLink: `/user/${userData?.username}/follows`
+      //         },
+      //         {
+      //           label: 'Salir',
+      //           command: () => this.as.logout()
+      //         }
+      //     ],
+      //     visible: userData !== undefined
+      // }
     ];
   }
 }
