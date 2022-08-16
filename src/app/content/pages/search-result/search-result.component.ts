@@ -43,7 +43,7 @@ export class SearchResultComponent implements OnInit{
     this.options = [
       {value: 'Películas', route: "movie"},
       {value: 'Series', route: "tv"},
-      {value: 'Usuarios', route: "user"}
+      // {value: 'Usuarios', route: "user"}
     ];
 
     this.optionField = this.options[0];
