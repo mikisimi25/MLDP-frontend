@@ -33,7 +33,7 @@ export class ListEffects {
     () => this.actions$.pipe(
       ofType( authActions.guestAccess ),
       mergeMap(
-        () => this.as.getGuestData()
+        () => this.as.setGuestData()
         .pipe(
           map( ({ lists }) => listActions.setLists( { lists } ) )
         )

@@ -58,7 +58,7 @@ export class AuthEffects {
     () => this.actions$.pipe(
       ofType( authActions.guestAccess ),
       mergeMap(
-        () => this.as.getGuestData()
+        () => this.as.setGuestData()
         .pipe(
           map( ({ user }) => authActions.setUserSuccess( { user } ) ),
           catchError( err => of(authActions.setUserFailure({ payload: err })) )

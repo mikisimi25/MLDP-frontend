@@ -8,7 +8,6 @@ import { guestAccess, login } from 'src/app/auth/redux/auth.actions';
 
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { User } from 'src/app/user/interfaces/user.interface';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -89,6 +88,10 @@ export class HeaderComponent{
             }
           ]
       },
+      {
+        label: 'Salir',
+        command: () => this.as.logout()
+      }
       // {
       //     label:'Listas',
       //     icon:'pi pi-fw pi-list',

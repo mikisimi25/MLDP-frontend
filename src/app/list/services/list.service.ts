@@ -1,19 +1,25 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, of, switchMap, BehaviorSubject } from 'rxjs';
+import { Observable, of, switchMap, BehaviorSubject, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducer';
 import { User } from 'src/app/user/interfaces/user.interface';
 import { environment } from 'src/environments/environment';
 import { List } from '../interfaces/list.interface';
+import * as listUtilities from 'src/app/shared/utilities/list.utilities';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ListService {
+export class ListService implements OnDestroy {
   private _groupedLists = new BehaviorSubject<any>([]);
   private _userData: User | undefined = undefined;
+  private _guest: boolean = false;
+  private _lists: List[] = [];
+  private _subscriptions: Subscription[] = [];
+
   public listChanges = new BehaviorSubject<number>(0);
+
 
   getGroupedListsSubject(){
     return this._groupedLists.asObservable();
@@ -39,23 +45,42 @@ export class ListService {
     private http: HttpClient,
     private store: Store<AppState>
   ) {
-    this.store.select('auth').subscribe( ({ user }) => {
+    this._subscriptions[0] = this.store.select('auth').subscribe( ({ user, guest }) => {
       if(user) {
         this._userData = user;
+        this._guest = guest;
+
         this.setUserListCollection( user );
       }
     })
+
+    this._subscriptions[1] = this.store.select('list').subscribe( ({ lists }) => {
+      this._lists = lists
+    })
+  }
+
+  ngOnDestroy() {
+    this._subscriptions.forEach( subscription => subscription.unsubscribe() );
   }
 
   public getMovieLists( mode?: boolean, username?: string, user_list_count?: number, id?: number ): Observable<List[]> {
-    let params: string = '?';
 
-    ( mode !== undefined ) && (params += '&public='+mode);
-    ( username !== undefined ) && (params += '&username='+username);
-    ( user_list_count !== undefined ) && (params += '&user_list_count='+user_list_count);
-    ( id !== undefined ) && (params += '&id='+id);
+    if(!this._guest) {
+      let params: string = '?';
 
-    return this.http.get<List[]>(`${environment.laravelApiURL}/list`+params)
+      ( mode !== undefined ) && (params += '&public='+mode);
+      ( username !== undefined ) && (params += '&username='+username);
+      ( user_list_count !== undefined ) && (params += '&user_list_count='+user_list_count);
+      ( id !== undefined ) && (params += '&id='+id);
+
+      return this.http.get<List[]>(`${environment.laravelApiURL}/list`+params);
+    } else {
+      //Guest
+      const lists: List[] = JSON.parse(localStorage.getItem('lists')!);
+
+      return of(lists);
+    }
+
   }
 
   public createList( newList: List ) {
@@ -80,19 +105,28 @@ export class ListService {
   }
 
   public addContentToList( listInpor: List , contentId: string ) {
-    return this.getMovieLists( undefined, listInpor.username, listInpor.user_list_count )
-      .pipe(
-        switchMap( (list:any) => {
-          let contentCollection = JSON.parse(list[0].contentId!);
 
-          if( contentCollection?.indexOf( contentId ) === -1 ) {
-            contentCollection?.push( contentId )
-            return this.http.patch<List>(`${environment.laravelApiURL}/list/${ list[0].id }/addContent`, { contentId: JSON.stringify(contentCollection), ...this.token } )
-          } else {
-            return of(undefined)
-          }
-        })
-      )
+    if(!this._guest) {
+      return this.getMovieLists( undefined, listInpor.username, listInpor.user_list_count )
+        .pipe(
+          switchMap( (list:any) => {
+            let contentCollection = JSON.parse(list[0].contentId!);
+
+            if( contentCollection?.indexOf( contentId ) === -1 ) {
+              contentCollection?.push( contentId )
+              return this.http.patch<List>(`${environment.laravelApiURL}/list/${ list[0].id }/addContent`, { contentId: JSON.stringify(contentCollection), ...this.token } )
+            } else {
+              return of(undefined)
+            }
+          })
+        )
+    } else {
+      //Guest
+      localStorage.setItem('lists',JSON.stringify(this._lists));
+
+      return of(listInpor)
+    }
+
   }
 
   public deleteContentFromList( listId: number, contentId: string ) {
