@@ -4,19 +4,6 @@
 
 export const environment = {
   production: false,
-
-  // TMDB
-  tmdbApiURL: 'https://api.themoviedb.org',
-  tmdbApiToken: '2f37bc57c20e8ab508f6ce88a9ead705',
-
-  //MLDP
-  laravelApiURL: 'http://localhost:8000/api',
-
-  //Guest
-  guestIdentifier: 'guest@gmail.com',
-  guestPassword: 'password',
-
-
 };
 
 /*
