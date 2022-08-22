@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { debounceTime } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducer';
-import { List } from 'src/app/list/interfaces/list.interface';
 import { ContentService } from 'src/app/shared/services/content.service';
 import { ListService } from '../../../list/services/list.service';
+
+//Interfaces
+import { List } from 'src/app/list/interfaces/list.interface';
 
 @Component({
   selector: 'app-list',
@@ -26,37 +28,42 @@ export class ListComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.activatedRoute.params.subscribe(({ username, listId }) => {
-      this._list = <List>{ user_list_count: listId, username: username};
-    })
+      this.activatedRoute.params.subscribe(({ username, listId }) => {
+        this._list = <List>{ user_list_count: listId, username: username};
 
-    this.store.select('auth')
-      .pipe(
-        debounceTime(500)
-      ).subscribe( ({ user }) => {
-        this.authorColumn = user?.username === this._list.username;
-        this.getCollection()
+          this.store.select('auth').pipe(debounceTime(500)).subscribe( ({ user }) => {
+            this.authorColumn = user?.username === this._list.username;
+
+            this.store.select('list').subscribe( () => {
+              this.ls.getMovieLists( undefined,this._list.username, this._list.user_list_count ).subscribe( list => {
+                this.contentCpllection = this.extractContent(list[0], this.authorColumn)
+              });
+            })
+          })
       })
-
-
-    this.store.select('list').subscribe(({ lists }) => {
-      this.getCollection()
-    })
   }
 
-  private getCollection() {
-    this.contentCpllection = []
-      this.ls.getMovieLists( undefined,this._list.username, this._list.user_list_count ).subscribe( list => {
 
-        JSON.parse(list[0].contentId!).forEach( (contentId:string) => {
-          if(list[0].public == true || this.authorColumn) {
-            let type: string = (contentId.includes('tv')) ? 'tv' : 'movie';
+  /**
+   * Gets the collection of content id and returns a collection of content
+   *
+   * @param list
+   * @returns
+   */
+  private extractContent( list: List, myList: boolean ): any {
 
-            this.cs.getMovieOrTvshowsById( contentId ).subscribe( content => this.contentCpllection.push({...content,type:type}))
-          }
-        })
+    const contentIdCollection: string[] = JSON.parse(list.contentId!);
+    let contentCollection: any = [];
 
-    });
+    contentIdCollection.forEach( (contentId:string) => {
+      if(list.public == true || myList) {
+        let type: string = (contentId.includes('tv')) ? 'tv' : 'movie';
+
+        this.cs.getMovieOrTvshowsById( contentId ).subscribe( content => contentCollection.push({...content,type:type}))
+      }
+    })
+
+    return contentCollection;
   }
 
 }
