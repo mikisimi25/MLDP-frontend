@@ -32,7 +32,8 @@ import { ErrorPageComponent } from './pages/error-page/error-page.component';
     ShortTitlePipe,
     SearchSelectorComponent,
     UserTableComponent,
-    ErrorPageComponent
+    ErrorPageComponent,
+    PrimengModule,
   ],
   imports: [
     CommonModule,

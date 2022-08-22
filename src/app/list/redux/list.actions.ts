@@ -8,6 +8,10 @@ export const setLists = createAction(
   props<{ lists: List[] }>()
 );
 
+export const unSetLists = createAction(
+  '[List Component] unSetLists'
+);
+
 export const createList = createAction(
   '[List Component] createList',
   props<{ list: List }>()

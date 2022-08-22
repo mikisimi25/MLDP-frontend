@@ -1,13 +1,18 @@
 import { createReducer, on } from '@ngrx/store';
+import { orderListCollection } from 'src/app/shared/utilities/list.utilities';
 import { List } from '../../list/interfaces/list.interface';
 import * as listActions from './list.actions';
 
 export interface ListState {
   lists: List[],
+  loaded: boolean,
+  msg: string
 }
 
 export const initialState: ListState = {
   lists: [],
+  loaded: false,
+  msg: ''
 }
 
 export const listReducer = createReducer(
@@ -18,9 +23,14 @@ export const listReducer = createReducer(
     lists: [...lists]
   })),
 
+  on(listActions.unSetLists, (state) => ({
+    ...state,
+    lists: []
+  })),
+
   on(listActions.createListSuccess, (state, { list }) => ({
     ...state,
-    lists: [...state.lists, list]
+    lists: orderListCollection([...state.lists, list])
   })),
 
   on(listActions.deleteList, (state, { list }) => ({
@@ -39,6 +49,7 @@ export const listReducer = createReducer(
 
   on(listActions.addContentToList, (state, { list, content }) => ({
     ...state,
+    loaded: false,
     lists: [
       ...state.lists.map( item => {
         if( item.user_list_count === list.user_list_count) {
@@ -56,19 +67,27 @@ export const listReducer = createReducer(
     })]
   })),
 
+  on(listActions.addContentToListSuccess, (state) => ({
+    ...state,
+    loaded: true,
+    msg: 'Película añadida a la lista'
+  })),
+
   on(listActions.deleteContentFromList, (state, { id, content }) => ({
     ...state,
     lists: [
       ...state.lists.map( item => {
-        if( item.id === id) {
-          let contentId = item.contentId?.split(',');
-          contentId = contentId!.filter( item => item !== content );
+        let list = {...item};
 
-          item.contentId = JSON.stringify(contentId);
+        if( list.user_list_count == id) {
+          let contentId = JSON.parse(list.contentId!);
+          contentId = contentId.filter( (item: string) => item !== content );
 
-          return {...item}
+          list.contentId = JSON.stringify(contentId);
+
+          return {...list}
         } else {
-          return item
+          return list
         }
     })]
   })),

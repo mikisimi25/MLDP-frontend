@@ -29,6 +29,18 @@ export class ListEffects {
     )
   );
 
+  public unSetUserLists = createEffect(
+    () => this.actions$.pipe(
+      ofType( authActions.unSetUser ),
+      mergeMap(
+        () => this.as.logout()
+        .pipe(
+          map( () => listActions.unSetLists() )
+        )
+      )
+    )
+  );
+
   public setGuestLists = createEffect(
     () => this.actions$.pipe(
       ofType( authActions.guestAccess ),

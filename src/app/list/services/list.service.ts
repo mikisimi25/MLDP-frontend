@@ -6,36 +6,21 @@ import { AppState } from 'src/app/app.reducer';
 import { User } from 'src/app/user/interfaces/user.interface';
 import { environment } from 'src/environments/environment';
 import { List } from '../interfaces/list.interface';
-import * as listUtilities from 'src/app/shared/utilities/list.utilities';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ListService implements OnDestroy {
-  private _groupedLists = new BehaviorSubject<any>([]);
   private _userData: User | undefined = undefined;
   private _guest: boolean = false;
   private _lists: List[] = [];
   private _subscriptions: Subscription[] = [];
 
-  public listChanges = new BehaviorSubject<number>(0);
+  // public listChanges = new BehaviorSubject<number>(0);
 
-
-  getGroupedListsSubject(){
-    return this._groupedLists.asObservable();
-  }
-
-  updateGroupedListsSubject() {
-    this.setUserListCollection(this._userData!)
-  }
-
-  getListChanges(){
-    return this.listChanges.asObservable();
-  }
-
-  public set groupedLists(value:any) {
-    this._groupedLists.next(value);
-  }
+  // getListChanges(){
+  //   return this.listChanges.asObservable();
+  // }
 
   get token() {
     return {token: JSON.parse(localStorage.getItem('token')!)};
@@ -49,17 +34,19 @@ export class ListService implements OnDestroy {
       if(user) {
         this._userData = user;
         this._guest = guest;
-
-        this.setUserListCollection( user );
       }
     })
 
     this._subscriptions[1] = this.store.select('list').subscribe( ({ lists }) => {
       this._lists = lists
+
+      if(this._userData) {
+        localStorage.setItem('lists',JSON.stringify(this._lists))
+      }
     })
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this._subscriptions.forEach( subscription => subscription.unsubscribe() );
   }
 
@@ -78,21 +65,58 @@ export class ListService implements OnDestroy {
       //Guest
       const lists: List[] = JSON.parse(localStorage.getItem('lists')!);
 
-      return of(lists);
+      if ( user_list_count !== undefined ) {
+        return of(lists.filter( list => list.user_list_count == user_list_count))
+      } else {
+        return of(lists);
+      }
+
     }
 
   }
 
-  public createList( newList: List ) {
-    const params = { ...this.token, ...newList };
+  public createList( newList: List ): Observable<List> {
 
-    return this.http.post<List>(`${environment.laravelApiURL}/list`, params)
+    if(this._guest) {
+      //Guest
+      const id: number = this._lists.length;
+      const lastElement: number = this._lists[this._lists.length-1].user_list_count!;
+      const listCount: number = (lastElement <= 10) ? 11 : lastElement+1;
+
+      const list: List = {
+        id: id,
+        username: this._userData?.username,
+        userId: this._userData?.id,
+        user_list_count: listCount,
+        description: '',
+        contentId: '[]',
+        public: false,
+        ...newList,
+      }
+
+      return of( list )
+
+    } else {
+      //User
+      const params = { ...this.token, ...newList };
+
+      return this.http.post<List>(`${environment.laravelApiURL}/list`, params)
+    }
+
   }
 
   public deleteList( list: List ): Observable<null> {
-    const params = new HttpParams().set('token',this.token.token)
+    //Guest
+    if(this._guest) {
 
-    return this.http.delete<null>(`${environment.laravelApiURL}/list/${ list.id }`,{params})
+      return of(null)
+
+    } else {
+      //User
+      const params = new HttpParams().set('token',this.token.token)
+
+      return this.http.delete<null>(`${environment.laravelApiURL}/list/${ list.id }`,{params})
+    }
   }
 
   public deleteSavedList( list: List ): void {
@@ -104,7 +128,7 @@ export class ListService implements OnDestroy {
       })
   }
 
-  public addContentToList( listInpor: List , contentId: string ) {
+  public addContentToList( listInpor: List , contentId: string ): Observable<List | undefined> {
 
     if(!this._guest) {
       return this.getMovieLists( undefined, listInpor.username, listInpor.user_list_count )
@@ -122,32 +146,38 @@ export class ListService implements OnDestroy {
         )
     } else {
       //Guest
-      localStorage.setItem('lists',JSON.stringify(this._lists));
-
       return of(listInpor)
     }
 
   }
 
-  public deleteContentFromList( listId: number, contentId: string ) {
-    return this.getMovieLists( undefined, undefined, undefined, listId )
-      .pipe(
-        switchMap( (list:any) => {
-          let contentCollection:any[] = JSON.parse(list[0].contentId!),
-          indexOfContent = contentCollection?.indexOf( contentId );
+  public deleteContentFromList( listId: number, contentId: string ): Observable<List | undefined> {
+    //Guest
+    if(this._guest) {
 
-          if(indexOfContent !== -1) {
-            contentCollection.splice(indexOfContent,1);
+      return of(undefined)
 
-            return this.http.patch<List>(`${environment.laravelApiURL}/list/${ list[0].id }/addContent`, { contentId: JSON.stringify(contentCollection), ...this.token } )
-          } else {
-            return of(undefined)
-          }
-        })
-      )
+    } else {
+      //User
+      return this.getMovieLists( undefined, undefined, undefined, listId )
+        .pipe(
+          switchMap( (list:any) => {
+            let contentCollection:any[] = JSON.parse(list[0].contentId!),
+            indexOfContent = contentCollection?.indexOf( contentId );
+
+            if(indexOfContent !== -1) {
+              contentCollection.splice(indexOfContent,1);
+
+              return this.http.patch<List>(`${environment.laravelApiURL}/list/${ list[0].id }/addContent`, { contentId: JSON.stringify(contentCollection), ...this.token } )
+            } else {
+              return of(undefined)
+            }
+          })
+        )
+    }
   }
 
-  public saveList( list: List ) {
+  public saveList( list: List ): Observable<Object> {
     const data = { user: this._userData, list: list, token: this.token.token }
 
     return this.http.post(`${environment.laravelApiURL}/list/save-list`, data)
@@ -160,18 +190,18 @@ export class ListService implements OnDestroy {
   }
 
   public updateList( changedList: List ): Observable<List> {
-    return this.http.put<List>(`${environment.laravelApiURL}/list/${ changedList.id }`, {...changedList, ...this.token})
+
+    //Guest
+    if(this._guest) {
+
+      return of( changedList )
+
+    } else {
+      //User
+
+      return this.http.put<List>(`${environment.laravelApiURL}/list/${ changedList.id }`, {...changedList, ...this.token})
+
+    }
   }
 
-  public setUserListCollection( userData: User ) {
-    this.getMovieLists(undefined,userData?.username).subscribe( (lists:any) => {
-      this.groupedLists = [
-        {
-          label: 'Mis Listas',
-          value: 'ml',
-          items: lists
-        }
-      ]
-    })
-  }
 }

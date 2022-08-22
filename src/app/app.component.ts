@@ -8,7 +8,7 @@ import { AuthService } from './auth/services/auth.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
-  title = 'MLDP';
+  public title = 'MLDP';
 
   constructor(
     private as: AuthService,

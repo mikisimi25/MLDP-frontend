@@ -4,7 +4,6 @@ import * as authActions from './auth.actions';
 
 export interface AuthState {
   user: User | undefined,
-  followers: User[],
   isLoggedIn: boolean,
   guest: boolean,
   token: string,
@@ -15,7 +14,6 @@ export interface AuthState {
 
 export const initialState: AuthState = {
   user: undefined,
-  followers: [],
   isLoggedIn: false,
   guest: false,
   token: '',

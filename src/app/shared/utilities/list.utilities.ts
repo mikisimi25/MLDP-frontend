@@ -14,3 +14,9 @@ export const indexOfList = ( lists: List[], targetList: List ) => {
 
   return index;
 }
+
+export const orderListCollection = ( listCollection: List[] ) => {
+  listCollection.sort((a,b) => a.user_list_count! - b.user_list_count!);
+
+  return listCollection;
+}
