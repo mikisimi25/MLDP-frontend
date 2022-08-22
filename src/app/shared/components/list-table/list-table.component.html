@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 
 <div class="card col-12 mb-3">
-  <p-toolbar *ngIf="buttonAddList">
+  <p-toolbar *ngIf="buttons.create">
     <ng-template pTemplate="left">
       <button pButton pRipple label="Nueva lista" icon="pi pi-plus" class="p-button-success mr-2"
         (click)="openNew()"></button>
@@ -32,16 +32,36 @@
         <td *ngIf="authorColumn"><span [routerLink]="'/user/'+list.username" class="author">{{list.username | titlecase}}</span></td>
         <td *ngIf="modeColumn">{{((list.public) ? 'público' : 'privado') | titlecase}}</td>
         <td>
-          <button pButton pRipple icon="pi pi-eye" class="p-button-rounded mr-2"
-            [routerLink]="'/user/'+list.username+'/list/'+list.id"></button>
-          <button *ngIf="isLoggedIn && (list.username !== userAuth?.username) && !buttonDeleteSavedList" pButton pRipple icon="pi pi-heart" class="p-button-rounded p-button-warning mr-2"
-            (click)="saveList(list)"></button>
-          <button *ngIf="buttonEditList" pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
-            (click)="updateList(list)"></button>
-          <button *ngIf="buttonDeleteList && (!reservedLists.includes(list.user_list_count))" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-            (click)="destroyList(list)"></button>
-          <button *ngIf="buttonDeleteSavedList" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
-          (click)="deleteSavedList(list)"></button>
+
+          <button pButton pRipple
+                  icon="pi pi-eye"
+                  class="p-button-rounded mr-2"
+                  [routerLink]="'/user/'+list.username+'/list/'+list.user_list_count"></button>
+
+          <button pButton pRipple
+                  icon="pi pi-heart"
+                  class="p-button-rounded p-button-warning mr-2"
+                  *ngIf="buttons.like && (list.username !== userAuth?.username)"
+                  (click)="saveList(list)"></button>
+
+          <button pButton pRipple
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-success mr-2"
+                  *ngIf="buttons.edit"
+                  (click)="updateList(list)"></button>
+
+          <button pButton pRipple
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-warning"
+                  *ngIf="buttons.delete && (!reservedLists.includes(list.user_list_count))"
+                  (click)="destroyList(list)"></button>
+
+          <button pButton pRipple
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger"
+                  *ngIf="buttons.dislike"
+                  (click)="deleteSavedList(list)"></button>
+
         </td>
       </tr>
     </ng-template>

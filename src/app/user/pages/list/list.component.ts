@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { debounce, debounceTime } from 'rxjs';
+import { debounceTime } from 'rxjs';
 import { AppState } from 'src/app/app.reducer';
-import { AuthService } from 'src/app/auth/services/auth.service';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { ContentService } from 'src/app/shared/services/content.service';
 import { ListService } from '../../../list/services/list.service';
-import { User } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-list',
@@ -23,14 +21,13 @@ export class ListComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private ls: ListService,
     private cs: ContentService,
-    private as: AuthService,
     private store: Store<AppState>
   ) { }
 
   ngOnInit(): void {
 
     this.activatedRoute.params.subscribe(({ username, listId }) => {
-      this._list = <List>{ id: listId, username: username};
+      this._list = <List>{ user_list_count: listId, username: username};
     })
 
     this.store.select('auth')
@@ -41,16 +38,15 @@ export class ListComponent implements OnInit {
         this.getCollection()
       })
 
-    this.ls.getListChanges().subscribe( listId => {
-      if( listId === this._list.id) {
-        this.getCollection()
-      }
+
+    this.store.select('list').subscribe(({ lists }) => {
+      this.getCollection()
     })
   }
 
   private getCollection() {
     this.contentCpllection = []
-      this.ls.getMovieLists( undefined,this._list.username,undefined, this._list.id ).subscribe( list => {
+      this.ls.getMovieLists( undefined,this._list.username, this._list.user_list_count ).subscribe( list => {
 
         JSON.parse(list[0].contentId!).forEach( (contentId:string) => {
           if(list[0].public == true || this.authorColumn) {

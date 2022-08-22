@@ -4,7 +4,6 @@ import * as userActions from './user.actions';
 
 export interface UserState {
   data: User | undefined,
-  followers: User[],
   loaded: boolean,
   loading: boolean,
   successMsg: string,
@@ -13,7 +12,6 @@ export interface UserState {
 
 export const initialState: UserState = {
   data: undefined,
-  followers: [],
   loaded: false,
   loading: false,
   successMsg: '',

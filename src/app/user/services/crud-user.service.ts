@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Observable, switchMap } from 'rxjs';
+import { AppState } from 'src/app/app.reducer';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { environment } from 'src/environments/environment';
 import { User } from '../interfaces/user.interface';
@@ -9,18 +11,19 @@ import { User } from '../interfaces/user.interface';
   providedIn: 'root'
 })
 export class CrudUserService {
-  private _user!: User | undefined;
-
-  public get user() {
-    return this._user
-  }
+  private user!: User | undefined;
 
   constructor(
     private http: HttpClient,
-    private as: AuthService
-  ) {
+    private store: Store<AppState>
+  ) { }
 
+  ngOnInit() {
+    this.store.select('user').subscribe( user => {
+      this.user = <User>user.data;
+    })
   }
+
 
   public getUser( id?: number, username?: string, email?: string, like?: string ): Observable<User[]> {
     let params: string = '?';
@@ -57,7 +60,7 @@ export class CrudUserService {
   public cancelFollow( recieverId: number ) {
     const params = new HttpParams()
       .set('token',JSON.parse(localStorage.getItem('token')!))
-      .set('user_requested_id',this.as.user?.id!)
+      .set('user_requested_id',this.user!.id!)
       .set('user_reciever_id',recieverId)
 
     return this.http.delete(`${environment.laravelApiURL}/user/follow-request`,{params})

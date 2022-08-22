@@ -1,61 +1,92 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
-import { AppState } from 'src/app/app.reducer';
-import { List } from 'src/app/list/interfaces/list.interface';
 import { ListService } from 'src/app/list/services/list.service';
-import { User } from 'src/app/user/interfaces/user.interface';
-import { CrudUserService } from 'src/app/user/services/crud-user.service';
+
+//Store
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
 import * as listActions from 'src/app/list/redux/list.actions';
 import * as userActions from 'src/app/user/redux/user.actions';
+
+//Interfaces
+import { List } from 'src/app/list/interfaces/list.interface';
+import { User } from 'src/app/user/interfaces/user.interface';
+import { GroupedList } from '../../interfaces/groupedList.interface';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'component-small-info-card',
   templateUrl: './small-info-card.component.html',
   styleUrls: ['./small-info-card.component.scss'],
-  providers: [MessageService]
+  providers: [ MessageService ]
 })
-export class SmallInfoCardComponent implements OnInit{
+export class SmallInfoCardComponent implements OnInit, OnDestroy {
   @Input() content?: any;
   @Input() type: string = this.activatedRoute.snapshot.data['content'];
   @Input() crud: boolean = true;
   @Input() deleteButton: boolean = false;
 
-  public groupedLists: any;
-  public selectedList: any;
-  public selectedLists: any = [];
+  public groupedLists: GroupedList[] = [];
+  public selectedList: List = <List>{};
+  public selectedLists: List[] = [];
   public sliceOption!: number;
   public isLoggedIn: boolean = false;
   public user: User | undefined = undefined;
+
+  private _subscriptions: Subscription[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private ls: ListService,
     private messageService: MessageService,
-    private cruds: CrudUserService,
     private store: Store<AppState>
   ) { }
 
   ngOnInit() {
 
-    this.store.select('auth').subscribe( ({ user,isLoggedIn }) => {
-      this.isLoggedIn = isLoggedIn;
-      this.user = user;
-    })
+    this.groupedLists = [
+      {
+        label: 'Mis Listas',
+        value: 'ml',
+        items: []
+      }
+    ];
 
-    this.ls.getGroupedListsSubject().subscribe( group => {
-      this.groupedLists = group;
-      (group.length > 0) && this.uploadChecks( this.groupedLists )
-    })
+    this._subscriptions.push(
+
+      this.store.select('auth').subscribe( ({ user,isLoggedIn }) => {
+        this.isLoggedIn = isLoggedIn;
+        this.user = user;
+      })
+
+    )
+
+    this._subscriptions.push(
+
+      this.store.select('list').subscribe(({ lists }) => {
+        this.groupedLists[0].items = lists;
+
+        (lists.length > 0) && this.uploadChecks( this.groupedLists[0].items );
+      })
+
+    )
 
   }
 
-  uploadChecks( prueba: any ) {
+  ngOnDestroy(): void {
+    this._subscriptions.forEach( subscription => subscription.unsubscribe() );
+  }
+
+  /**
+   * Update the checks of the collection list
+   * @param items imports all the lists
+   */
+  uploadChecks( items: any ) {
     this.sliceOption = ( this.type == 'movie' ) ? 6 : 3;
 
-    if(prueba[0].items.length > 0) {
-      prueba[0].items?.forEach( (lista:any) => {
+    if(items.length > 0) {
+      items?.forEach( (lista:any) => {
         JSON.parse(lista.contentId)?.forEach( (movieId: any) => {
           movieId = movieId.toString().slice(this.sliceOption);
 
@@ -68,9 +99,14 @@ export class SmallInfoCardComponent implements OnInit{
     }
   }
 
-  public showSuccess( movieId: number, list: List[]) {
-    if( list.length > 0) {
-      const selectedList: List = list.slice(-1)[0] || 0;
+  /**
+   *
+   * @param movieId id of the content
+   * @param lists all lists where the content is added
+   */
+  public showSuccess( movieId: number, lists: List[]) {
+    if( lists.length > 0) {
+      const selectedList: List = lists.slice(-1)[0] || 0;
 
       // this.ls.addContentToList( selectedList, this.type+'/'+movieId.toString())
       //   .subscribe( data => {
@@ -84,10 +120,15 @@ export class SmallInfoCardComponent implements OnInit{
 
       this.store.dispatch( listActions.addContentToList({ list: selectedList, content: this.type+'/'+movieId.toString() }) );
 
-      this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ list.slice(-1)[0].title})
+      this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ lists.slice(-1)[0].title})
     }
   }
 
+  /**
+   * Adds the content to viewed list
+   *
+   * @param movieId id of the content
+   */
   public addToViewed( movieId: string ) {
     // this.ls.addContentToList( <List>{username: this.user?.username, user_list_count: 2}, movieId )
     //   .subscribe( list => {
@@ -101,7 +142,7 @@ export class SmallInfoCardComponent implements OnInit{
     //     }
     //   })
 
-    this.store.dispatch( listActions.addContentToList({ list: <List>{username: this.user?.username, user_list_count: 2}, content: this.type+'/'+movieId.toString() }) );
+    this.store.dispatch( listActions.addContentToList({ list: <List>{username: this.user?.username, user_list_count: 2}, content: movieId.toString() }) );
 
     this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
   }
@@ -113,13 +154,16 @@ export class SmallInfoCardComponent implements OnInit{
   public deleteContentFromList( contentId: string ) {
 
     this.activatedRoute.params.subscribe(({ listId }) => {
-      this.ls.deleteContentFromList( listId, (this.type + '/' + contentId) )
-        .subscribe({
-          next: resp => {
-            this.messageService.add({severity:'success', summary: 'Contenido eliminado'});
-            this.ls.listChanges.next(listId)
-          }
-        })
+
+      this.store.dispatch( listActions.deleteContentFromList({ id: listId, content: this.type + '/' + contentId }) )
+
+      // this.ls.deleteContentFromList( listId, (this.type + '/' + contentId) )
+      //   .subscribe({
+      //     next: resp => {
+      //       this.messageService.add({severity:'success', summary: 'Contenido eliminado'});
+      //       // this.ls.listChanges.next(listId)
+      //     }
+      //   })
     })
 
   }

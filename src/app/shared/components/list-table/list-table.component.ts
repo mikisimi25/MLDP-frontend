@@ -1,15 +1,24 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { List } from 'src/app/list/interfaces/list.interface';
-import { ListService } from 'src/app/list/services/list.service';
-import { ConfirmationService } from 'primeng/api';
-import { User } from 'src/app/user/interfaces/user.interface';
-import { AuthService } from 'src/app/auth/services/auth.service';
-import { ActivatedRoute } from '@angular/router';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
-import { AppState } from 'src/app/app.reducer';
+import { Subscription } from 'rxjs';
+import { ListService } from 'src/app/list/services/list.service';
+
+//PrimeNg
+import { ConfirmationService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
+
+//Redux
 import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
 import * as listActions from 'src/app/list/redux/list.actions';
+
+//Interfaces
+import { List } from 'src/app/list/interfaces/list.interface';
+import { User } from 'src/app/user/interfaces/user.interface';
+import { Buttons } from '../../interfaces/listTable.interface';
+
+//Utilities
+import * as subsUtilities from 'src/app/shared/utilities/subscription.utilities';
 
 @Component({
   selector: 'component-list-table',
@@ -17,8 +26,8 @@ import * as listActions from 'src/app/list/redux/list.actions';
   styleUrls: ['./list-table.component.scss'],
   providers: [TitleCasePipe]
 })
-export class ListTableComponent implements OnInit{
-  @Input() lists!:any;
+export class ListTableComponent implements OnInit, OnDestroy {
+  @Input() lists: any;
   @Input() userLists?: User;
 
   //Buttons
@@ -35,32 +44,60 @@ export class ListTableComponent implements OnInit{
   @Input() rows: number = 10;
   @Input() paginator: boolean = true;
 
+  //List atributes
   public list: List = <List>{};
   public listDialog: boolean = false;
   public submitted: boolean = false;
-  public _author: boolean = true;
+
   public reservedLists: number[] = [1,2,3,4,5,6,7,8,9,10]
-  public tableViewes:any = [];
-  public activeTableView:any = {};
   public isLoggedIn: boolean = false;
   public isLoggedOut: boolean = true;
   public userAuth: User | undefined = undefined;
+
+  public subscriptions: Subscription[] = [];
+
+  //Buttons boolean
+  public buttons: Buttons = {
+    create: false,
+    edit: false,
+    delete: false,
+    like: false,
+    dislike: false
+  }
 
   constructor(
     private ls: ListService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private as: AuthService,
     public titleCasePipe: TitleCasePipe,
     public store: Store<AppState>
-  ) {  }
+  ) { }
 
-  ngOnInit(){
-    this.store.select('auth').subscribe( ({ user,isLoggedIn }) => {
-      this.userAuth = user;
-      this.isLoggedIn = isLoggedIn;
-      this.isLoggedOut = !isLoggedIn;
-    })
+  ngOnInit(): void {
+    this.subscriptions.push(
+
+      this.store.select('auth').subscribe( ({ user,isLoggedIn }) => {
+
+        this.userAuth = user;
+        this.isLoggedIn = isLoggedIn;
+        this.isLoggedOut = !isLoggedIn;
+
+        this.buttons = {
+          ...this.buttons,
+          create: this.buttonAddList,
+          edit: this.buttonEditList,
+          delete: this.buttonDeleteList,
+          like: this.isLoggedIn && !this.buttonDeleteSavedList,
+          dislike: this.buttonDeleteSavedList
+        }
+
+      })
+
+    )
+  }
+
+  ngOnDestroy(): void {
+    subsUtilities.unsubscribe(this.subscriptions)
   }
 
   public openNew() {
@@ -119,7 +156,7 @@ export class ListTableComponent implements OnInit{
   }
 
   public showChanges() {
-    this.lists = [...this.lists];
+    // this.lists = [...this.lists];
     this.listDialog = false;
     this.list = <List>{};
   }

@@ -1,10 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+
+//Store
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducer';
-import { AuthService } from 'src/app/auth/services/auth.service';
-import { List } from 'src/app/list/interfaces/list.interface';
 import { ListService } from 'src/app/list/services/list.service';
+
+//Utilities
+import * as subsUtilities from 'src/app/shared/utilities/subscription.utilities';
+
+//Interface
+import { List } from 'src/app/list/interfaces/list.interface';
 import { User } from '../../interfaces/user.interface';
 
 @Component({
@@ -12,45 +19,64 @@ import { User } from '../../interfaces/user.interface';
   templateUrl: './lists.component.html',
   styleUrls: ['./lists.component.scss']
 })
-export class ListsComponent implements OnInit {
-  private _lists: List[] = [];
-  private _permission: boolean = false;
-
-  public get lists(): List[] {
-    return this._lists;
-  }
-
-  public get permission(): boolean {
-    return this._permission;
-  }
+export class ListsComponent implements OnInit, OnDestroy {
+  public lists: List[] = [];
+  public permission: boolean = false;
+  public subscriptions: Subscription[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private ls: ListService,
-    private as: AuthService,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private ls: ListService
   ) {  }
 
   ngOnInit(): void {
-    this.store.select('auth').subscribe( ({ user }) => {
-      this.getCollection( user! )
-    })
+    this.subscriptions.push(
+
+      this.store.subscribe(({ auth, list  }) => {
+        //Guest
+        if( auth.guest ) {
+          this.lists = [...list.lists];
+          this.permission = true;
+        } else {
+        //User
+          this.getCollection( auth.user! );
+        }
+      })
+
+    )
   }
 
-  private getCollection( userData: User ) {
-    this.activatedRoute.params.subscribe(({ username }) => {
-        this._permission = userData?.username === username;
+  ngOnDestroy(): void {
+    subsUtilities.unsubscribe(this.subscriptions);
+  }
 
-        this.ls.getMovieLists((userData?.username === username ? undefined : true),username).subscribe( lists => {
-          this._lists = lists
-          if(this._permission) {
-            this._lists = lists
-          } else {
-            lists.forEach( list => {
-              ( list.public ) && (this.lists.push(list));
+  /**
+   *  Set the collection of users lists
+   * @param userData
+   */
+  private getCollection( userData: User ): void {
+    this.subscriptions.push(
+
+      this.activatedRoute.params.subscribe(({ username }) => {
+          this.permission = userData?.username === username;
+
+          this.subscriptions.push(
+
+            this.ls.getMovieLists((userData?.username === username ? undefined : true),username).subscribe( lists => {
+              this.lists = lists
+              if(this.permission) {
+                this.lists = lists
+              } else {
+                lists.forEach( list => {
+                  ( list.public ) && (this.lists.push(list));
+                })
+              }
             })
-          }
-        })
-    })
+
+          )
+      })
+
+    )
   }
 }

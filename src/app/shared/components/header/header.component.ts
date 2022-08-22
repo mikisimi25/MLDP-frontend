@@ -4,9 +4,8 @@ import { Router } from '@angular/router';
 
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducer';
-import { guestAccess, login } from 'src/app/auth/redux/auth.actions';
+import { guestAccess, login, unSetUser } from 'src/app/auth/redux/auth.actions';
 
-import { AuthService } from 'src/app/auth/services/auth.service';
 import { User } from 'src/app/user/interfaces/user.interface';
 
 @Component({
@@ -30,7 +29,6 @@ export class HeaderComponent{
   public options: any;
 
   constructor(
-    private as: AuthService,
     private router: Router,
     public titleCasePipe: TitleCasePipe,
     private store: Store<AppState>
@@ -69,29 +67,20 @@ export class HeaderComponent{
   setMenuItems( userData: User ) {
     this._items = [
       {
-          label:'Películas',
-          icon:'pi pi-fw pi-movie',
-          items: [
-            {
-              label: 'Populares',
-              routerLink: `/movie/all`
-            }
-          ]
+        label:'Películas',
+        icon:'pi pi-fw pi-movie',
+        routerLink: `/movie/all`
       },
       {
-          label:'Series',
-          icon:'pi pi-fw pi-movie',
-          items: [
-            {
-              label: 'Populares',
-              routerLink: `/tv/all`
-            }
-          ]
+        label:'Series',
+        icon:'pi pi-fw pi-movie',
+        routerLink: `/tv/all`
       },
       {
-        label: 'Salir',
-        command: () => this.as.logout()
-      }
+        label: 'Mis listas',
+        routerLink: `/user/${userData?.username}/lists`,
+        visible: userData !== undefined
+      },
       // {
       //     label:'Listas',
       //     icon:'pi pi-fw pi-list',
@@ -112,6 +101,10 @@ export class HeaderComponent{
       //       },
       //     ]
       // },
+      {
+        label: 'Salir',
+        command: () => this.store.dispatch( unSetUser() )
+      }
       // {
       //     label:this.titleCasePipe.transform(userData?.username),
       //     icon:'pi pi-fw pi-user',

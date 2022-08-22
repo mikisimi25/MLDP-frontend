@@ -6,9 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from './shared/shared.module';
-import { PrimengModule } from './shared/primeng/primeng.module';
 import { AuthService } from './auth/services/auth.service';
-import { NgHttpLoaderModule } from 'ng-http-loader';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -30,10 +28,9 @@ import { UserEffects } from './user/redux/user.effects';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    // FlexLayoutModule,
     SharedModule,
-    PrimengModule,
-    NgHttpLoaderModule.forRoot(),
+
+    //Redux
     StoreModule.forRoot( appReducers ),
 		EffectsModule.forRoot([ AuthEffects, UserEffects, ListEffects ]),
 		StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
