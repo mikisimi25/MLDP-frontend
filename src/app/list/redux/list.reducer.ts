@@ -53,16 +53,18 @@ export const listReducer = createReducer(
     lists: [
       ...state.lists.map( item => {
         if( item.user_list_count === list.user_list_count) {
-          let newItem = {...item};
-          let newContentId = JSON.parse(newItem.contentId!);
+          let list = {...item};
+          let listContentCollection = JSON.parse(list.contentId!);
 
-          newContentId.push(content);
+          if(!listContentCollection.includes(content)) {
+            listContentCollection.push(content);
+          }
 
-          newItem.contentId = JSON.stringify(newContentId);
+          list.contentId = JSON.stringify(listContentCollection);
 
-          return newItem
+          return {...list}
         } else {
-          return item
+          return {...item}
         }
     })]
   })),
