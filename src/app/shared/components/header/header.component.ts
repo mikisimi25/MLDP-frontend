@@ -68,16 +68,17 @@ export class HeaderComponent{
     this._items = [
       {
         label:'Películas',
-        icon:'pi pi-fw pi-movie',
+        icon:'fa-solid fa-film',
         routerLink: `/movie/all`
       },
       {
         label:'Series',
-        icon:'pi pi-fw pi-movie',
+        icon: 'fa-solid fa-tv',
         routerLink: `/tv/all`
       },
       {
         label: 'Mis listas',
+        icon: 'fa-solid fa-clipboard-list',
         routerLink: `/user/${userData?.username}/lists`,
         visible: userData !== undefined
       },
@@ -103,7 +104,9 @@ export class HeaderComponent{
       // },
       {
         label: 'Salir',
-        command: () => this.store.dispatch( unSetUser() )
+        icon: 'fa-solid fa-arrow-right-from-bracket',
+        command: () => this.store.dispatch( unSetUser() ),
+        visible: userData !== undefined
       }
       // {
       //     label:this.titleCasePipe.transform(userData?.username),

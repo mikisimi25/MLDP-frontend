@@ -18,6 +18,7 @@ import { appReducers } from './app.reducer';
 import { AuthEffects } from './auth/redux/auth.effects'
 import { ListEffects } from './list/redux/list.effects';
 import { UserEffects } from './user/redux/user.effects';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { UserEffects } from './user/redux/user.effects';
     StoreModule.forRoot( appReducers ),
 		EffectsModule.forRoot([ AuthEffects, UserEffects, ListEffects ]),
 		StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+  FontAwesomeModule,
   ],
   providers: [ AuthService ],
   bootstrap: [AppComponent]
