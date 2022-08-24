@@ -137,21 +137,30 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
    * @param movieId id of the content
    */
   public addToViewed( movieId: string ) {
-    // this.ls.addContentToList( <List>{username: this.user?.username, user_list_count: 2}, movieId )
-    //   .subscribe( list => {
-    //     if(list) {
-    //       this.selectedLists.push(list)
-    //       this.selectedLists = [...this.selectedLists];
-    //       this.ls.updateGroupedListsSubject()
-    //       this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
-    //     } else {
-    //       this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
-    //     }
-    //   })
 
-    this.store.dispatch( listActions.addContentToList({ list: <List>{username: this.user?.username, user_list_count: 2}, content: movieId.toString() }) );
+    if(this.viewed) {
+      this.store.dispatch( listActions.deleteContentFromList({ id: 2, content: movieId.toString() }) );
 
-    this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
+      this.messageService.add({severity:'warn', summary: 'Película descartada de la lista de Vistos'});
+
+      this.viewed = false;
+    } else {
+      // this.ls.addContentToList( <List>{username: this.user?.username, user_list_count: 2}, movieId )
+      //   .subscribe( list => {
+      //     if(list) {
+      //       this.selectedLists.push(list)
+      //       this.selectedLists = [...this.selectedLists];
+      //       this.ls.updateGroupedListsSubject()
+      //       this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
+      //     } else {
+      //       this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
+      //     }
+      //   })
+
+      this.store.dispatch( listActions.addContentToList({ list: <List>{username: this.user?.username, user_list_count: 2}, content: movieId.toString() }) );
+
+      this.messageService.add({severity:'success', summary: 'Película añadida a la lista de Vistos'});
+    }
   }
 
   public addFollower( userId: number ) {
