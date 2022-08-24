@@ -28,7 +28,7 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
   @Input() deleteButton: boolean = false;
 
   public groupedLists: GroupedList[] = [];
-  public selectedList: List = <List>{};
+  public oldCollection: List[] = [];
   public selectedLists: List[] = [];
   public sliceOption!: number;
   public isLoggedIn: boolean = false;
@@ -85,6 +85,7 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
    */
   uploadChecks( listas: any ) {
     this.sliceOption = ( this.type == 'movie' ) ? 6 : 3;
+    this.selectedLists = [];
 
     if(listas.length > 0) {
       listas?.forEach( (lista: List) => {
@@ -99,10 +100,12 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
             }
 
             this.selectedLists.push(lista)
+            this.oldCollection = this.selectedLists;
           }
 
         })
       })
+
     }
   }
 
@@ -111,24 +114,44 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
    * @param movieId id of the content
    * @param lists all lists where the content is added
    */
-  public showSuccess( movieId: number, lists: List[]) {
-    if( lists.length > 0) {
-      const selectedList: List = lists.slice(-1)[0] || 0;
+  public toggleAdd( movieId: number, lists: List[]) {
+      if( this.oldCollection > lists ) {
+        let descartedList: List = this.catchDeletetedList(this.oldCollection,lists);
 
-      // this.ls.addContentToList( selectedList, this.type+'/'+movieId.toString())
-      //   .subscribe( data => {
-      //     if(data) {
-      //       this.ls.updateGroupedListsSubject()
-      //       this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ list.slice(-1)[0].title})
-      //     } else {
-      //       this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
-      //     }
-      //   })
+        // const selectedList: List = lists.slice(-1)[0] || 0;
 
-      this.store.dispatch( listActions.addContentToList({ list: selectedList, content: this.type+'/'+movieId.toString() }) );
+        // this.ls.addContentToList( selectedList, this.type+'/'+movieId.toString())
+        //   .subscribe( data => {
+        //     if(data) {
+        //       this.ls.updateGroupedListsSubject()
+        //       this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ list.slice(-1)[0].title})
+        //     } else {
+        //       this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
+        //     }
+        //   })
 
-      this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ lists.slice(-1)[0].title})
-    }
+        this.store.dispatch( listActions.deleteContentFromList({ id: descartedList.user_list_count!, content: this.type+'/'+movieId.toString() }) );
+
+        this.messageService.add({severity:'warn', summary: 'Película descartada de la lista de '+ descartedList.title})
+      } else {
+        if( lists.length > 0) {
+          const selectedList: List = lists.slice(-1)[0] || 0;
+
+          // this.ls.addContentToList( selectedList, this.type+'/'+movieId.toString())
+          //   .subscribe( data => {
+          //     if(data) {
+          //       this.ls.updateGroupedListsSubject()
+          //       this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ list.slice(-1)[0].title})
+          //     } else {
+          //       this.messageService.add({severity:'warn', summary: 'Contenido repetido'});
+          //     }
+          //   })
+
+          this.store.dispatch( listActions.addContentToList({ list: selectedList, content: this.type+'/'+movieId.toString() }) );
+
+          this.messageService.add({severity:'success', summary: 'Película añadida a la lista de '+ lists.slice(-1)[0].title})
+        }
+      }
   }
 
   /**
@@ -182,5 +205,22 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
       //   })
     })
 
+  }
+
+  private catchDeletetedList( oldLists: List[], newLists: List[] ): List {
+    let oldCollection: List[] = oldLists;
+    let newCollection: List[] = newLists;
+    let descartedList!: List;
+
+    oldCollection.forEach((oldList) => {
+      let index = newCollection.findIndex( list => list.user_list_count === oldList.user_list_count )
+
+      if(index == -1) {
+        descartedList = oldList;
+      }
+
+    })
+
+    return descartedList;
   }
 }

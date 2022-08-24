@@ -48,9 +48,18 @@
 
   <p-overlayPanel #op>
     <ng-template pTemplate>
-        <p-listbox [options]="groupedLists" [group]="true" [(ngModel)]="selectedLists" [metaKeySelection]="false"
-          [checkbox]="true" [filter]="true" [multiple]="true" [listStyle]="{'max-height':'250px'}"
-          [style]="{'width':'15rem'}" optionLabel="title" (onClick)="showSuccess(content.id,selectedLists)" >
+        <p-listbox
+          [options]="groupedLists"
+          [group]="true"
+          [(ngModel)]="selectedLists"
+          [metaKeySelection]="false"
+          [checkbox]="true"
+          [filter]="true"
+          [multiple]="true"
+          [listStyle]="{'max-height':'250px'}"
+          [style]="{'width':'15rem'}"
+          optionLabel="title"
+          (onClick)="toggleAdd(content.id,selectedLists)" >
 
         <ng-template let-group pTemplate="group">
           <div class="flex align-items-center">
