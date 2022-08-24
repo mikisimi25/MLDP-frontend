@@ -49,12 +49,13 @@
   <p-overlayPanel #op>
     <ng-template pTemplate>
         <p-listbox
+          [showToggleAll]="false"
+          [filter]="false"
           [options]="groupedLists"
           [group]="true"
           [(ngModel)]="selectedLists"
           [metaKeySelection]="false"
           [checkbox]="true"
-          [filter]="true"
           [multiple]="true"
           [listStyle]="{'max-height':'250px'}"
           [style]="{'width':'15rem'}"
