@@ -27,10 +27,14 @@
   <ng-template pTemplate="footer" style="padding: 0 !important;">
     <div class="grid mt-1" style="text-align: center" *ngIf="isLoggedIn">
       <div class="col-12" *ngIf="((user?.username !== content.username) && (this.type === 'user'))" style="text-align: right">
-        <button pButton pRipple icon="pi pi-user-plus" class="p-button-rounded" (click)="addFollower(content.id)" pTooltip="Seguir al usuario"></button>
+        <button pButton pRipple
+                icon="pi pi-user-plus"
+                class="p-button-rounded"
+                (click)="addFollower(content.id)"
+                pTooltip="Seguir al usuario"></button>
       </div>
       <div class="col" *ngIf="(crud && this.type !== 'user')">
-        <button (click)="addToViewed(type+'/'+content.id)" pButton pRipple type="button" icon="pi pi-eye" class="p-button-rounded p-button-help" pTooltip="Visto"></button>
+        <button (click)="addToViewed(type+'/'+content.id)" pButton pRipple type="button" [icon]="viewed ? 'fa-solid fa-eye' : 'fa-regular fa-eye'" class="p-button-rounded p-button-help" pTooltip="Visto"></button>
       </div>
       <div class="col" *ngIf="(crud && this.type !== 'user')">
         <button (click)="op.toggle($event)" pButton pRipple type="button" icon="pi pi-bookmark" class="p-button-rounded p-button-warning" pTooltip="Añadir a una lista"></button>

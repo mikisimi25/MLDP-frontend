@@ -35,6 +35,7 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
   public user: User | undefined = undefined;
 
   private _subscriptions: Subscription[] = [];
+  public viewed: boolean = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -80,17 +81,23 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
 
   /**
    * Update the checks of the collection list
-   * @param items imports all the lists
+   * @param listas imports all the lists
    */
-  uploadChecks( items: any ) {
+  uploadChecks( listas: any ) {
     this.sliceOption = ( this.type == 'movie' ) ? 6 : 3;
 
-    if(items.length > 0) {
-      items?.forEach( (lista:any) => {
-        JSON.parse(lista.contentId)?.forEach( (movieId: any) => {
+    if(listas.length > 0) {
+      listas?.forEach( (lista: List) => {
+        const contentCollection: string[] = JSON.parse(lista.contentId!);
+
+        contentCollection.forEach( (movieId: any) => {
           movieId = movieId.toString().slice(this.sliceOption);
 
           if( movieId == this.content.id) {
+            if(lista.user_list_count == 2) {
+              this.viewed = true;
+            }
+
             this.selectedLists.push(lista)
           }
 
