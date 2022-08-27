@@ -107,7 +107,6 @@ export class ListTableComponent implements OnInit, OnDestroy {
   }
 
   public updateList( list: List ) {
-    (list.public) && (list.public = true);
     this.list = {...list};
     this.listDialog = true;
   }
@@ -136,7 +135,7 @@ export class ListTableComponent implements OnInit, OnDestroy {
     this.submitted = true;
 
     if (this.list.title.trim()) {
-        if (this.list.id) {
+        if (this.list.id !== undefined) {
             this.lists[this.findIndexById(this.list.id)] = this.list;
 
             this.store.dispatch( listActions.editList({ list: this.list }) )
