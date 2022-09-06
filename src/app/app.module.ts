@@ -19,6 +19,7 @@ import { AuthEffects } from './auth/redux/auth.effects'
 import { ListEffects } from './list/redux/list.effects';
 import { UserEffects } from './user/redux/user.effects';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { SafePipe } from './shared/pipes/safe.pipe';
 
 @NgModule({
   declarations: [

@@ -70,4 +70,16 @@ export class ContentService {
     }
 
   }
+
+  public getContentTrailer( contentType: string, contentId: string ) {
+    const params = new HttpParams()
+      .set('api_key',environment.tmdbApiToken)
+      // .set('language','es')
+
+    if( contentType === 'movie' ) {
+      return this.http.get(`${environment.tmdbApiURL}/3/movie/${contentId}/videos`, { params })
+    } else {
+      return this.http.get(`${environment.tmdbApiURL}/3/tv/${contentId}/videos`, { params })
+    }
+  }
 }

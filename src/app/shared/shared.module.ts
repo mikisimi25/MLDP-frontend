@@ -11,6 +11,7 @@ import { SearchSelectorComponent } from './components/search-selector/search-sel
 import { UserTableComponent } from './components/user-table/user-table.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { SafePipe } from './pipes/safe.pipe';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ListTableComponent,
     SearchSelectorComponent,
     UserTableComponent,
-    ErrorPageComponent
+    ErrorPageComponent,
+    SafePipe
   ],
   exports: [
     HeaderComponent,
@@ -33,6 +35,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     UserTableComponent,
     ErrorPageComponent,
     PrimengModule,
+    SafePipe
   ],
   imports: [
     CommonModule,
