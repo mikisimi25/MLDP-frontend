@@ -4,7 +4,7 @@
   </ng-template>
   <ng-template pTemplate="end">
     <div class="grid">
-      <div *ngIf="!isLoggedIn" class="col-4">
+      <div *ngIf="!auth.isLoggedIn" class="col-4">
         <div class="p-inputgroup">
           <button (click)="guestLogin()" pButton pRipple type="button" label="Invitado" class="p-button-warn"></button>
           <!-- <button routerLink="auth/signin" pButton pRipple type="button" label="Login" class="p-button-primary"></button>
@@ -12,7 +12,7 @@
         </div>
       </div>
 
-      <div class="grid p-fluid" [ngClass]="!isLoggedIn ? 'col-8' : 'col-12'">
+      <div class="grid p-fluid" [ngClass]="!auth.isLoggedIn ? 'col-8' : 'col-12'">
         <div class="col-12 md:col-5">
           <p-dropdown inputId="dropdown" [autoDisplayFirst]="false" [options]="options" [(ngModel)]="optionField" optionLabel="value" placeholder="Películas"></p-dropdown>
         </div>

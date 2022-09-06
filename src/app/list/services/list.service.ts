@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, of, switchMap, BehaviorSubject, Subscription } from 'rxjs';
+import { Observable, of, switchMap, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducer';
 import { User } from 'src/app/user/interfaces/user.interface';
 import { environment } from 'src/environments/environment';
@@ -15,12 +15,6 @@ export class ListService implements OnDestroy {
   private _guest: boolean = false;
   private _lists: List[] = [];
   private _subscriptions: Subscription[] = [];
-
-  // public listChanges = new BehaviorSubject<number>(0);
-
-  // getListChanges(){
-  //   return this.listChanges.asObservable();
-  // }
 
   get token() {
     return {token: JSON.parse(localStorage.getItem('token')!)};

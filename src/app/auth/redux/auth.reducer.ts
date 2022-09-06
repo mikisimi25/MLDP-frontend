@@ -7,8 +7,6 @@ export interface AuthState {
   isLoggedIn: boolean,
   guest: boolean,
   token: string,
-  loaded: boolean,
-  loading: boolean,
   error: any
 }
 
@@ -17,8 +15,6 @@ export const initialState: AuthState = {
   isLoggedIn: false,
   guest: false,
   token: '',
-  loaded: false,
-  loading: false,
   error: null
 }
 
@@ -62,20 +58,15 @@ export const authReducer = createReducer(
   on(authActions.changeUserData, (state, { user }) => ({
     ...state,
     user: <User>{ ...user },
-    loading: true,
   })),
 
   on(authActions.success, (state) => ({
     ...state,
-    loading: false,
-    loaded: true,
     error: null
   })),
 
   on(authActions.failure, (state) => ({
     ...state,
-    loading: false,
-    loaded: true,
     error: 'error'
   })),
 );

@@ -5,13 +5,11 @@ import * as listActions from './list.actions';
 
 export interface ListState {
   lists: List[],
-  loaded: boolean,
   msg: string
 }
 
 export const initialState: ListState = {
   lists: [],
-  loaded: false,
   msg: ''
 }
 
@@ -49,7 +47,6 @@ export const listReducer = createReducer(
 
   on(listActions.addContentToList, (state, { list, content }) => ({
     ...state,
-    loaded: false,
     lists: [
       ...state.lists.map( item => {
         if( item.user_list_count === list.user_list_count) {
@@ -71,8 +68,6 @@ export const listReducer = createReducer(
 
   on(listActions.addContentToListSuccess, (state) => ({
     ...state,
-    loaded: true,
-    msg: 'Película añadida a la lista'
   })),
 
   on(listActions.deleteContentFromList, (state, { id, content }) => ({

@@ -3,18 +3,18 @@ import { RouterModule, Routes } from '@angular/router';
 import { ErrorPageComponent } from './shared/pages/error-page/error-page.component';
 
 const routes: Routes = [
-  // {
-  //   path: 'auth',
-  //   loadChildren: () => import('./auth/auth.module').then( m => m.AuthModule)
-  // },
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then( m => m.AuthModule)
+  },
   {
     path: 'user',
     loadChildren: () => import('./user/user.module').then( m => m.UserModule)
   },
-  // {
-  //   path: 'list',
-  //   loadChildren: () => import('./list/list.module').then( m => m.ListModule)
-  // },
+  {
+    path: 'list',
+    loadChildren: () => import('./list/list.module').then( m => m.ListModule)
+  },
   {
     path: 'movie',
     data: { content: 'movie' },
