@@ -3,6 +3,24 @@
     cursor: pointer;
   }
 
+  .points {
+
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+
+    span {
+      font-family: 'Poppins',sans-serif;
+      font-size: 1.5em;
+      font-weight: bold;
+      color:#16A34A;
+    }
+  }
+
+  .p-card-body {
+    padding-top: 0em;
+  }
+
   .p-card,.p-card-footer,.p-card-content {
     padding: 0!important;
   }
@@ -19,9 +37,17 @@
   .imageContainer {
     height: 311.78px;
     overflow: hidden;
+    position: relative;
 
     img {
       height: 100%;
+    }
+
+    button {
+      bottom: 5px;
+      right: 5px;
+      opacity: 0.9;
+      position: absolute;
     }
   }
 

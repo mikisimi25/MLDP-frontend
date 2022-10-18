@@ -21,6 +21,8 @@
     "@ngrx/effects": "^14.0.1",
     "@ngrx/store": "^14.0.1",
     "@ngrx/store-devtools": "^14.0.1",
+    "@ngx-translate/core": "^14.0.0",
+    "@ngx-translate/http-loader": "^7.0.0",
     "font-awesome": "^4.7.0",
     "ng-http-loader": "^12.0.0",
     "primeflex": "^3.2.1",

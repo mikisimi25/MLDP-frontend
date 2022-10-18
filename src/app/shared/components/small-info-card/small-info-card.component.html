@@ -1,6 +1,7 @@
 <p-toast></p-toast>
 
 <p-card>
+
   <ng-template pTemplate="title" >
       <span [routerLink]="'/'+type+'/'+((type !== 'user') ? content.id : content.username)">
         {{
@@ -21,6 +22,7 @@
                    'https://png.clipart.me/previews/90c/movie-poster-background-vector-material-17011.jpg')"
             [routerLink]="'/'+type+'/'+((type !== 'user') ? content.id : content.username)"
              >
+      <button *ngIf="content.vote_average" pButton pRipple type="button" [label]="content?.vote_average" class="p-button-rounded p-button-secondary"></button>
     </div>
   </ng-template>
 

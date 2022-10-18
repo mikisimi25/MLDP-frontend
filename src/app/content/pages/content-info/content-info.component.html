@@ -1,14 +1,22 @@
 <div class="grid">
   <main class="lg:col-10 lg:col-offset-1 col-12 grid" style="padding: 1em;">
     <p-card class="md:col-3 col-12 poster">
+
       <ng-template pTemplate="content">
         <img style="width: 100%" alt="Card" [src]="(content?.poster_path ?
         ('https://image.tmdb.org/t/p/w500' + content.poster_path) :
         'https://png.clipart.me/previews/90c/movie-poster-background-vector-material-17011.jpg')">
+
+        <button *ngIf="content.vote_average"
+                pButton disabled
+                label="{{content.vote_average | number: '.0-2'}}"
+                class="p-button-rounded p-button-secondary"></button>
       </ng-template>
+
       <ng-template pTemplate="footer">
         <button pButton type="button" label="Trailer" class="p-button-outlined p-button-danger col-12" (click)="trailerModal()"></button>
       </ng-template>
+
     </p-card>
 
     <p-card class="md:col-9 col-12 contentInfo">

@@ -10,7 +10,7 @@ import { ListTableComponent } from './components/list-table/list-table.component
 import { SearchSelectorComponent } from './components/search-selector/search-selector.component';
 import { UserTableComponent } from './components/user-table/user-table.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+// import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SafePipe } from './pipes/safe.pipe';
 
 @NgModule({
@@ -41,7 +41,7 @@ import { SafePipe } from './pipes/safe.pipe';
     CommonModule,
     PrimengModule,
     FormsModule,
-    FontAwesomeModule
+    // FontAwesomeModule
   ]
 })
 export class SharedModule { }
