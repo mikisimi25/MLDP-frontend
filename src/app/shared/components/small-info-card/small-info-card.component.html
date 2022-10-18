@@ -44,9 +44,11 @@
       <div class="col" *ngIf="(crud && this.type !== 'user') && deleteButton">
         <button (click)="deleteContentFromList(content.id)" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger" pTooltip="Quitar de la lista"></button>
       </div>
+      <div class="col" *ngIf="(crud && this.type !== 'user' && viewed)">
+        <button (click)="rating.toggle($event)" pButton pRipple type="button" [icon]="selectedRating ? 'fa-solid fa-star' : 'fa-regular fa-star'"class="p-button-rounded p-button-warning" pTooltip="Puntuar"></button>
+      </div>
     </div>
   </ng-template>
-
 
   <p-overlayPanel #op>
     <ng-template pTemplate>
@@ -72,6 +74,10 @@
 
       </p-listbox>
     </ng-template>
+  </p-overlayPanel>
+
+  <p-overlayPanel #rating>
+    <p-dropdown [options]="ratingColl" [(ngModel)]="selectedRating" (onChange)="changeRating()" placeholder="Puntuación personal" [showClear]="true"></p-dropdown>
   </p-overlayPanel>
 
 </p-card>

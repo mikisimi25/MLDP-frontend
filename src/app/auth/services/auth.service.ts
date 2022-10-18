@@ -110,6 +110,7 @@ export class AuthService implements OnInit{
             contentId: "[]",
         }
       ],
+      ratingColl = new Map(),
       user: User = {
         username: "guest",
         description: "Hola soy Bebop"
@@ -118,6 +119,7 @@ export class AuthService implements OnInit{
       localStorage.setItem('guest',JSON.stringify(true));
       localStorage.setItem('user',JSON.stringify(user));
       localStorage.setItem('lists',JSON.stringify(lists));
+      localStorage.setItem('ratingColl',JSON.stringify(Array.from(ratingColl.entries())));
 
       return of({ user, lists })
     } else {

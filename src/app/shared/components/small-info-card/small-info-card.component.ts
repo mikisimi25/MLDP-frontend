@@ -13,7 +13,7 @@ import * as userActions from 'src/app/user/redux/user.actions';
 import { List } from 'src/app/list/interfaces/list.interface';
 import { User } from 'src/app/user/interfaces/user.interface';
 import { GroupedList } from '../../interfaces/groupedList.interface';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 
 @Component({
   selector: 'component-small-info-card',
@@ -37,9 +37,11 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
   private _subscriptions: Subscription[] = [];
   public viewed: boolean = false;
 
+  public ratingColl: number[] = [];
+  public selectedRating: number | null = null;
+
   constructor(
     private activatedRoute: ActivatedRoute,
-    private ls: ListService,
     private messageService: MessageService,
     private store: Store<AppState>
   ) { }
@@ -54,11 +56,20 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
       }
     ];
 
+    for(let i = 1; i <= 10; i++) {
+      this.ratingColl.push(i);
+    }
+
     this._subscriptions.push(
 
       this.store.select('auth').subscribe( ({ user,isLoggedIn }) => {
         this.isLoggedIn = isLoggedIn;
         this.user = user;
+
+        //Reset
+        this.viewed = false;
+
+        this.selectedRating = this.setRaiting();
       })
 
     )
@@ -72,7 +83,6 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
       })
 
     )
-
   }
 
   ngOnDestroy(): void {
@@ -83,7 +93,7 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
    * Update the checks of the collection list
    * @param listas imports all the lists
    */
-  uploadChecks( listas: any ) {
+  public uploadChecks( listas: any ) {
     this.sliceOption = ( this.type == 'movie' ) ? 6 : 3;
     this.selectedLists = [];
 
@@ -205,6 +215,32 @@ export class SmallInfoCardComponent implements OnInit, OnDestroy {
       //   })
     })
 
+  }
+
+  public setRaiting(): number | null {
+    const raitingMap = new Map(JSON.parse(localStorage.getItem('ratingColl')!))
+
+    const content: string = this.type + '/' + this.content.id;
+    const raiting = raitingMap.get(content);
+
+    if( raiting !== undefined ) {
+      return <number>raiting;
+    }
+
+    return null;
+  }
+
+  public changeRating(): void {
+    const raitingMap = new Map(JSON.parse(localStorage.getItem('ratingColl')!));
+    const content: string = this.type + '/' + this.content.id;
+
+    if(this.selectedRating) {
+      raitingMap.set(content,this.selectedRating)
+    } else {
+      raitingMap.delete(content)
+    }
+
+    localStorage.setItem('ratingColl',JSON.stringify(Array.from(raitingMap.entries())));
   }
 
   private catchDeletetedList( oldLists: List[], newLists: List[] ): List {
